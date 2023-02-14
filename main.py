@@ -1,5 +1,5 @@
 '''
-This is the main file.
+This is the main driver file.
 '''
 
 import pygame as p
@@ -16,6 +16,7 @@ bg = p.image.load('images/deck.png')
 bg = p.transform.scale(bg, (WIDTH, HEIGHT))
 
 
+# The main function
 def main():
     running = True
     while running:

@@ -10,6 +10,15 @@
 - if not yelled Uno, player has to get 2 cards
 - if first card is a special card, the effect apllies to the current player, except: Wild cards
 
+A standard deck of Uno cards consists of 108 cards:
+- 25 cards of each color (red, blue, green, and yellow)
+- 19 number cards (1 zero and 2 each of one through nine)
+  - 2 Draw Two cards
+  - 2 Reverse cards
+  - 2 Skip cards
+4 Wild cards
+4 Wild Draw 4 cards
+
 Reverse – If going clockwise, switch to counterclockwise or vice versa. 
         It can only be played on a card that matches by color, or on another Reverse card. 
         If turned up at the beginning of play, the dealer goes first, and the player to the 

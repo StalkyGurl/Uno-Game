@@ -1,5 +1,5 @@
 '''
-This is a file that contains all of the cards, Draw pile and Discard pile.
+This is a file that contains all the cards, Draw pile and Discard pile.
 '''
 
 import pygame as p

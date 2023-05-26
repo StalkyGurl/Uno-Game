@@ -10,6 +10,11 @@ class Card():
         self.value = value
         self.color = color
 
+class SpecialCard(Card):
+    def __init__(self, value, color, power):
+        super().__init__(value, color)
+        self.power = power
+
 def load_cards():
 
     folder_path = 'images/cards'

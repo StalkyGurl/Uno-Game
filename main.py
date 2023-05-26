@@ -1,32 +1,27 @@
 '''
-This is the main driver file.
+This is the main file.
 '''
 
 import pygame as p
-
-WIDTH = 720
-HEIGHT = 480
-FPS = 60
-
-p.init()
-p.display.set_caption('Uno')
-screen = p.display.set_mode((WIDTH,HEIGHT))
-clock = p.time.Clock()
-bg = p.image.load('images/deck.png')
-bg = p.transform.scale(bg, (WIDTH, HEIGHT))
+import MainMenu
 
 
 # The main function
 def main():
-    running = True
-    while running:
-        screen.fill('black')
-        screen.blit(bg, (0, 0))
-        for e in p.event.get():
-            if e.type == p.QUIT:
-                running = False
-        p.display.flip()
-        clock.tick(60)
+
+    WIDTH = 1080
+    HEIGHT = 720
+    FPS = 60
+
+    p.init()
+    p.display.set_caption('Uno')
+    screen = p.display.set_mode((WIDTH, HEIGHT))
+    clock = p.time.Clock()
+    bg = p.image.load('images/deck.png')
+    bg = p.transform.scale(bg, (WIDTH, HEIGHT))
+
+    main_menu = MainMenu.MainMenu(WIDTH, screen, bg, clock, FPS)
+    main_menu.start()
 
 
 if __name__ == '__main__':

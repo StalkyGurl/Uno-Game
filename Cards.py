@@ -1,25 +1,31 @@
 """
-This is a file that contains all the cards, Draw pile and Discard pile.
+This file contains Card class and the function to load cards.
 """
 
 import pygame as p
 import os
 
-folder_path = 'images/cards'
+class Card():
+    def __init__(self, value, color):
+        self.value = value
+        self.color = color
 
-# Scaling the all th cards
-card_height = 70
-card_width = 50
+def load_cards():
 
-# Loading all cards images
-card_name_list = os.listdir(folder_path)
-cards = dict()
+    folder_path = 'images/cards'
 
-for image_name in card_name_list:
-    name = image_name[:-4]
-    cards[name] = p.image.load("images/cards/" + image_name)
-    cards[name] = p.transform.scale(cards[name], (card_height, card_width))
+    # Scaling the all th cards
+    card_height = 70
+    card_width = 50
 
-deck = p.image.load('images/deck.png')
-back_card = p.image.load('images/back.png')
-back_card = p.transform.scale(back_card, (card_height, card_width))
+    # Loading all cards images
+    card_name_list = os.listdir(folder_path)
+    cards = dict()
+
+    for image_name in card_name_list:
+        name = image_name[:-4]
+        cards[name] = p.image.load("images/cards/" + image_name)
+        cards[name] = p.transform.scale(cards[name], (card_height, card_width))
+
+    back_card = p.image.load('images/back.png')
+    back_card = p.transform.scale(back_card, (card_height, card_width))

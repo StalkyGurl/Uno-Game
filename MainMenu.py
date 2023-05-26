@@ -14,6 +14,7 @@ class MainMenu():
         self.bg = bg
         self.clock = clock
         self.FPS = FPS
+
     def start(self):
 
         running = True

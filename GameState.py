@@ -21,4 +21,3 @@ class GameState():
                     running = False
             p.display.flip()
             clock.tick(FPS)
-

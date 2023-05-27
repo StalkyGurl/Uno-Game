@@ -38,14 +38,15 @@ class MainMenu():
 
             for event in p.event.get():
                 if event.type == p.QUIT:
-                    p.quit()
                     running = False
+                    p.quit()
                 if event.type == p.MOUSEBUTTONDOWN:
                     if PLAY_BUTTON.checkForInput(MENU_MOUSE_POS):
                         game = GameState.GameState()
                         game.play(self.screen, self.bg, self.clock, self.FPS)
                     if QUIT_BUTTON.checkForInput(MENU_MOUSE_POS):
-                        p.quit()
                         running = False
+                        p.quit()
+
 
             p.display.update()

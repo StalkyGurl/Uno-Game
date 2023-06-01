@@ -21,6 +21,7 @@ class GameState:
         self.queue.put(self.ai3)
 
 
+
     def play(self, screen, bg, clock, FPS):
 
 
@@ -34,9 +35,6 @@ class GameState:
             screen.fill('black')
             screen.blit(bg, (0, 0))
             board.display_cards(self.player, self.ai1, self.ai2, self.ai3, screen)
-
-            #list = Cards.generate_list_of_cards()
-            #list[7].drawCard(screen, 50, 50)
 
             for e in p.event.get():
                 if e.type == p.QUIT:

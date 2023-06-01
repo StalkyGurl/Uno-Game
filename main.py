@@ -4,7 +4,6 @@ This is the main file.
 
 import pygame as p
 import MainMenu
-import GameState
 
 
 # The main function

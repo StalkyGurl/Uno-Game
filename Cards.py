@@ -28,6 +28,7 @@ class SpecialCard(Card):
         self.reverse = reverse
         self.wild = wild
         self.wild_draw_four = wild_draw_four
+        self.wild_color_choice = None
 
     def drawCard(self, screen, x, y):
         cards = load_cards()

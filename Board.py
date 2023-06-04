@@ -64,7 +64,7 @@ class Board:
 
         j = 0
         for card in p1.hand:
-            card.drawCard(screen, (120 + ((WIDTH - 2 * 10) // lenP) * j), HEIGHT - 150)
+            card.drawCard(screen, (120 + ((WIDTH - 2 * 10) / lenP) * j), HEIGHT - 150)
             j += 1
 
         for i in range(len2):

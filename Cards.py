@@ -32,13 +32,13 @@ class SpecialCard(Card):
 
     def drawCard(self, screen, x, y):
         cards = load_cards()
-        if self.wild == True and self.wild_draw_four == False:
+        if self.wild and not self.wild_draw_four:
             screen.blit(cards["wild"], (x - 110, y - 70))
-        elif self.wild == True and self.wild_draw_four == True:
+        elif self.wild and self.wild_draw_four:
             screen.blit(cards["wild_draw_4"], (x - 110, y - 70))
-        elif self.block == True:
+        elif self.block:
             screen.blit(cards[self.color + "_block"], (x - 110, y - 70))
-        elif self.reverse == True:
+        elif self.reverse:
             screen.blit(cards[self.color + "_reverse"], (x - 110, y - 70))
         else:
             screen.blit(cards[self.color + "_plus_two"], (x - 100, y - 70))

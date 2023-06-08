@@ -2,7 +2,6 @@
 This file contains Board class.
 """
 
-import Cards
 from Player import *
 from random import shuffle
 import pygame as p
@@ -37,12 +36,10 @@ class Board:
         elif len(self.discard_pile) == 0:
             self.discard_pile.append(self.draw_pile.pop())
 
-    def deal_the_cards(self, p1, p2, p3, p4):
-        for _ in range(7):
-            p1.hand.append(self.draw_pile.pop())
-            p2.hand.append(self.draw_pile.pop())
-            p3.hand.append(self.draw_pile.pop())
-            p4.hand.append(self.draw_pile.pop())
+    def deal_the_cards(self, players):
+        for player in players:
+            for _ in range(7):
+                player.hand.append(self.draw_pile.pop())
 
     def display_cards(self, p1, a2, a3, a4, screen):
 
@@ -75,4 +72,3 @@ class Board:
 
         for i in range(len4):
             screen.blit(back_card_r, (WIDTH - 200, (150 - ((HEIGHT - 2 * 150) // len2) * i + 250)))
-

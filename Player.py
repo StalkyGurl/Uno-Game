@@ -3,6 +3,9 @@ This file contains Player class.
 """
 
 import Cards
+import Button
+import pygame as p
+from random import choice
 
 
 class Player:
@@ -10,32 +13,118 @@ class Player:
         self.hand = []
         self.cards_to_take = 0
         self.blocked = False
+        self.nick = 'Player'
 
     # Function to check if card can be placed
     def checkCard(self, picked_card, board):
         top_card = board.discard_pile[-1]
         if isinstance(picked_card, Cards.SpecialCard) and picked_card.wild:
             return True
-        elif isinstance(top_card, Cards.SpecialCard) and top_card.wild and top_card.wild_color_choice == top_card.color:
+        elif isinstance(top_card, Cards.SpecialCard) and top_card.wild \
+                and top_card.wild_color_choice == picked_card.color:
+            return True
+        elif isinstance(top_card, Cards.SpecialCard) and top_card.wild_draw_four and \
+                isinstance(picked_card, Cards.SpecialCard) and picked_card.draw > 0:
             return True
         elif isinstance(top_card, Cards.SpecialCard):
             if picked_card.color == top_card.color:
                 return True
-            elif isinstance(picked_card, Cards.SpecialCard) and ((picked_card.block and top_card.block) or \
-                    (picked_card.reverse and top_card.reverse) or (picked_card.block and top_card.block)):
+            elif isinstance(picked_card, Cards.SpecialCard) and ((picked_card.block and top_card.block) or
+                                                                 (picked_card.reverse and top_card.reverse) or
+                                                                         (picked_card.draw > 0 and top_card.draw > 0)):
                 return True
             else:
                 return False
         elif picked_card.color == top_card.color or \
-                (not isinstance(picked_card, Cards.SpecialCard) and picked_card.value == picked_card.value):
+                (not isinstance(picked_card, Cards.SpecialCard) and picked_card.value == top_card.value):
             return True
         else:
             return False
 
+    # Function to display a screen that asks player to pick a color
+    def AskForAColor(self):
+        width = 1080
+
+        blue_button = Button.Button(image=p.image.load("images/button.png"), pos=(width // 2, 200),
+                                    text_input="BLUE", font=Button.get_font(40), base_color="#04122E",
+                                    hovering_color="#0D53DE")
+        green_button = Button.Button(image=p.image.load("images/button.png"), pos=(width // 2, 350),
+                                     text_input="GREEN", font=Button.get_font(40), base_color="#052603",
+                                     hovering_color="#17DE0B")
+        yellow_button = Button.Button(image=p.image.load("images/button.png"), pos=(width // 2, 500),
+                                      text_input="YELLOW", font=Button.get_font(40), base_color="#2D3006",
+                                      hovering_color="#DFF007")
+        red_button = Button.Button(image=p.image.load("images/button.png"), pos=(width // 2, 650),
+                                   text_input="RED", font=Button.get_font(40), base_color="#2B0404",
+                                   hovering_color="#FA0202")
+
+        p.init()
+        p.display.set_caption('Question')
+        screen = p.display.set_mode((1080, 720))
+        bg = p.image.load('images/deck.png')
+        bg = p.transform.scale(bg, (1080, 720))
+
+        running = True
+        while running:
+
+            screen.fill('black')
+            screen.blit(bg, (0, 0))
+
+            text = Button.get_font(70).render("PICK A COLOR", True, "#000000")
+            text_rect = text.get_rect(center=(1080 // 2, 50))
+
+            screen.blit(text, text_rect)
+
+            blue_button.update(screen)
+            green_button.update(screen)
+            yellow_button.update(screen)
+            red_button.update(screen)
+
+            blue_button.changeColor(p.mouse.get_pos())
+            green_button.changeColor(p.mouse.get_pos())
+            yellow_button.changeColor(p.mouse.get_pos())
+            red_button.changeColor(p.mouse.get_pos())
+
+            for e in p.event.get():
+                if e.type == p.QUIT:
+                    running = False
+                elif e.type == p.MOUSEBUTTONDOWN:
+                    if blue_button.checkForInput(p.mouse.get_pos()):
+                        return 'B'
+                    elif green_button.checkForInput(p.mouse.get_pos()):
+                        return 'G'
+                    elif yellow_button.checkForInput(p.mouse.get_pos()):
+                        return 'Y'
+                    elif red_button.checkForInput(p.mouse.get_pos()):
+                        return 'R'
+                    running = False
+            p.display.update()
+
     # Function to make a move
-    def makeMove(self, picked_card, board):
+    def makeMove(self, picked_card, board, gamestate):
+
+        if isinstance(board.discard_pile[-1], Cards.SpecialCard) and board.discard_pile[-1].wild:
+            board.discard_pile[-1].wild_color_choice = None
+
         board.discard_pile.append(picked_card)
         self.hand.remove(picked_card)
+
+        if isinstance(picked_card, Cards.SpecialCard) and picked_card.wild:
+            if gamestate.queue[0] == gamestate.player:
+                color = self.AskForAColor()
+                picked_card.wild_color_choice = color
+            else:
+                color = choice(['B', 'G', 'Y', 'R'])
+                picked_card.wild_color_choice = color
+                print("[Log] AI picked " + color + " color!")
+        if isinstance(picked_card, Cards.SpecialCard) and picked_card.draw != 0:
+            gamestate.queue[1].cards_to_take += picked_card.draw
+        if isinstance(picked_card, Cards.SpecialCard) and picked_card.reverse:
+            current_player = gamestate.queue.pop(0)
+            gamestate.queue.reverse()
+            gamestate.queue.insert(0, current_player)
+        if isinstance(picked_card, Cards.SpecialCard) and picked_card.block:
+            gamestate.queue[1].blocked = True
 
     # Function to check if any card in player's hand can be placed
     def hasPlaceableCard(self, board):

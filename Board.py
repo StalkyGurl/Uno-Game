@@ -6,7 +6,6 @@ from Player import *
 from random import shuffle
 import pygame as p
 
-
 WIDTH = 1080
 HEIGHT = 720
 
@@ -30,7 +29,7 @@ class Board:
     def complete_piles(self):
         if len(self.draw_pile) <= 5:
             cards_to_move = self.discard_pile[:-1]
-            self.discard_pile = self.discard_pile[-1]
+            self.discard_pile = [self.discard_pile[-1]]
             shuffle(cards_to_move)
             self.draw_pile.extend(cards_to_move)
         elif len(self.discard_pile) == 0:
@@ -51,8 +50,32 @@ class Board:
         back_card_s = p.transform.scale(back_card, (card_width - 50, card_height - 60))
         back_card_r = p.transform.rotate(back_card_s, 90)
         back_card_l = p.transform.rotate(back_card_r, 180)
+
         screen.blit(back_card, (WIDTH // 2 - 200, HEIGHT // 2 - 120))
-        self.discard_pile[-1].drawCard(screen, WIDTH // 2 + 120, HEIGHT // 2 - 50)
+
+        last_card = self.discard_pile[-1]
+
+        if isinstance(last_card, Cards.SpecialCard) and last_card.wild and \
+                self.discard_pile[-1].wild_color_choice is not None:
+
+            rectangle_width = 150
+            rectangle_height = 230
+
+            rectangle_x = WIDTH // 2 + 10 - 5
+            rectangle_y = HEIGHT // 2 - 120 - 5
+
+            color = last_card.wild_color_choice
+
+            if color == 'B':
+                p.draw.rect(screen, (0, 135, 245), (rectangle_x, rectangle_y, rectangle_width, rectangle_height), 5)
+            elif color == 'G':
+                p.draw.rect(screen, (0, 245, 0), (rectangle_x, rectangle_y, rectangle_width, rectangle_height), 5)
+            elif color == 'Y':
+                p.draw.rect(screen, (245, 245, 0), (rectangle_x, rectangle_y, rectangle_width, rectangle_height), 5)
+            else:
+                p.draw.rect(screen, (245, 0, 0), (rectangle_x, rectangle_y, rectangle_width, rectangle_height), 5)
+
+        last_card.drawCard(screen, WIDTH // 2 + 120, HEIGHT // 2 - 50)
 
         lenP = len(p1.hand)
         len2 = len(a2.hand)
@@ -60,15 +83,19 @@ class Board:
         len4 = len(a4.hand)
 
         j = 0
-        for card in p1.hand:
-            card.drawCard(screen, (120 + ((WIDTH - 2 * 10) / lenP) * j), HEIGHT - 150)
-            j += 1
+        if lenP > 0:
+            for card in p1.hand:
+                card.drawCard(screen, (120 + ((WIDTH - 20) / lenP) * j), HEIGHT - 150)
+                j += 1
 
-        for i in range(len2):
-            screen.blit(back_card_l, (40, (150 - ((HEIGHT - 2 * 150) // len2) * i + 250)))
+        if len2 > 0:
+            for i in range(len2):
+                screen.blit(back_card_l, (40, (150 - ((HEIGHT - 300) / len2) * i + 250)))
 
-        for i in range(len3):
-            screen.blit(back_card_s, ((250 + ((WIDTH - 2 * 250) // len3) * i), 10))
+        if len3 > 0:
+            for i in range(len3):
+                screen.blit(back_card_s, ((250 + ((WIDTH - 500) / len3) * i), 10))
 
-        for i in range(len4):
-            screen.blit(back_card_r, (WIDTH - 200, (150 - ((HEIGHT - 2 * 150) // len2) * i + 250)))
+        if len4 > 0:
+            for i in range(len4):
+                screen.blit(back_card_r, (WIDTH - 200, (150 - ((HEIGHT - 300) / len4) * i + 250)))

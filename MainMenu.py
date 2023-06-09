@@ -2,7 +2,7 @@
 This file contains MainMenu class.
 """
 
-import os
+import sys
 import pygame as p
 import Button
 import GameState
@@ -40,6 +40,7 @@ class MainMenu():
                 if event.type == p.QUIT:
                     running = False
                     p.quit()
+                    sys.exit()
                 if event.type == p.MOUSEBUTTONDOWN:
                     if PLAY_BUTTON.checkForInput(MENU_MOUSE_POS):
                         game = GameState.GameState()
@@ -47,6 +48,6 @@ class MainMenu():
                     if QUIT_BUTTON.checkForInput(MENU_MOUSE_POS):
                         running = False
                         p.quit()
-
+                        sys.exit()
 
             p.display.update()

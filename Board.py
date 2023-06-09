@@ -42,12 +42,34 @@ class Board:
 
     def display_cards(self, p1, a2, a3, a4, screen):
 
+        lenP = len(p1.hand)
+        len2 = len(a2.hand)
+        len3 = len(a3.hand)
+        len4 = len(a4.hand)
+
+        if len2 > 0:
+            a2_name = p.font.SysFont("Comic Sans", 25).render(a2.nick + " [" + str(len2) + "]", True, "#FFFFFF")
+            a2_name = p.transform.rotate(a2_name, 90)
+            a2_name_rect = a2_name.get_rect(center=(20, 275))
+            screen.blit(a2_name, a2_name_rect)
+
+        if len3 > 0:
+            a3_name = p.font.SysFont("Comic Sans", 25).render(a3.nick + " [" + str(len3) + "]", True, "#FFFFFF")
+            a3_name_rect = a3_name.get_rect(center=(540, 20))
+            screen.blit(a3_name, a3_name_rect)
+
+        if len4 > 0:
+            a4_name = p.font.SysFont("Comic Sans", 25).render(a4.nick + " [" + str(len4) + "]", True, "#FFFFFF")
+            a4_name = p.transform.rotate(a4_name, 270)
+            a4_name_rect = a4_name.get_rect(center=(1060, 275))
+            screen.blit(a4_name, a4_name_rect)
+
         card_height = 220
         card_width = 140
 
         back_card = p.image.load('images/back.png')
         back_card = p.transform.scale(back_card, (card_width, card_height))
-        back_card_s = p.transform.scale(back_card, (card_width - 50, card_height - 60))
+        back_card_s = p.transform.scale(back_card, (card_width - 60, card_height - 75))
         back_card_r = p.transform.rotate(back_card_s, 90)
         back_card_l = p.transform.rotate(back_card_r, 180)
 
@@ -77,25 +99,43 @@ class Board:
 
         last_card.drawCard(screen, WIDTH // 2 + 120, HEIGHT // 2 - 50)
 
-        lenP = len(p1.hand)
-        len2 = len(a2.hand)
-        len3 = len(a3.hand)
-        len4 = len(a4.hand)
-
         j = 0
-        if lenP > 0:
+        if lenP > 4:
             for card in p1.hand:
                 card.drawCard(screen, (120 + ((WIDTH - 20) / lenP) * j), HEIGHT - 150)
                 j += 1
+        elif lenP > 0:
+            for card in p1.hand:
+                card.drawCard(screen, (220 + ((WIDTH - 120) / lenP) * j), HEIGHT - 150)
+                j += 1
 
-        if len2 > 0:
+        if len2 > 20:
+            for i in range(20):
+                screen.blit(back_card_l, (40, (150 - ((HEIGHT - 300) / len2) * i + 250)))
+        elif len2 > 4:
             for i in range(len2):
                 screen.blit(back_card_l, (40, (150 - ((HEIGHT - 300) / len2) * i + 250)))
+        elif len2 > 0:
+            for i in range(len2):
+                screen.blit(back_card_l, (40, (150 - ((HEIGHT - 400) / len2) * i + 250)))
 
-        if len3 > 0:
+        if len3 > 20:
+            for i in range(20):
+                screen.blit(back_card_s, ((250 + ((WIDTH - 500) / len3) * i), 40))
+        elif len3 > 4:
             for i in range(len3):
-                screen.blit(back_card_s, ((250 + ((WIDTH - 500) / len3) * i), 10))
+                screen.blit(back_card_s, ((250 + ((WIDTH - 500) / len3) * i), 40))
+        elif len3 > 0:
+            for i in range(len3):
+                screen.blit(back_card_s, ((350 + ((WIDTH - 700) / len3) * i), 40))
 
-        if len4 > 0:
+        if len4 > 20:
+            for i in range(20):
+                screen.blit(back_card_r, (WIDTH - 200, (150 - ((HEIGHT - 300) / len4) * i + 250)))
+        elif len4 > 4:
             for i in range(len4):
                 screen.blit(back_card_r, (WIDTH - 200, (150 - ((HEIGHT - 300) / len4) * i + 250)))
+        elif len4 > 0:
+            for i in range(len4):
+                screen.blit(back_card_r, (WIDTH - 200, (150 - ((HEIGHT - 400) / len4) * i + 250)))
+

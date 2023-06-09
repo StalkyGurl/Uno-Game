@@ -36,17 +36,19 @@ class MainMenu():
                 button.changeColor(MENU_MOUSE_POS)
                 button.update(self.screen)
 
-            for event in p.event.get():
-                if event.type == p.QUIT:
-                    running = False
+            for e in p.event.get():
+                if e.type == p.QUIT:
                     p.quit()
                     sys.exit()
-                if event.type == p.MOUSEBUTTONDOWN:
+                if e.type == p.MOUSEBUTTONDOWN:
                     if PLAY_BUTTON.checkForInput(MENU_MOUSE_POS):
                         game = GameState.GameState()
                         game.play(self.screen, self.bg, self.clock, self.FPS)
                     if QUIT_BUTTON.checkForInput(MENU_MOUSE_POS):
-                        running = False
+                        p.quit()
+                        sys.exit()
+                if e.type == p.KEYDOWN:
+                    if e.key == p.K_ESCAPE:
                         p.quit()
                         sys.exit()
 

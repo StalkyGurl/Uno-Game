@@ -21,8 +21,8 @@ class SpecialCard(Card):
     def __init__(self, color, id, draw=0, block=False,
                  reverse=False, wild=False, wild_draw_four=False):
         self.color = color
-        self.id = id # here id is: color (or none if Wild card)
-                    # + the name of the card + natural number [0, 3]
+        self.id = id  # here id is: color (or none if Wild card)
+                      # + the name of the card + natural number [0, 3]
         self.draw = draw
         self.block = block
         self.reverse = reverse

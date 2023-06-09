@@ -24,14 +24,15 @@ class Player:
                 and top_card.wild_color_choice == picked_card.color:
             return True
         elif isinstance(top_card, Cards.SpecialCard) and top_card.wild_draw_four and \
-                isinstance(picked_card, Cards.SpecialCard) and picked_card.draw > 0:
+                isinstance(picked_card, Cards.SpecialCard) and picked_card.draw == 2 and \
+                top_card.wild_color_choice == picked_card.color:
             return True
         elif isinstance(top_card, Cards.SpecialCard):
             if picked_card.color == top_card.color:
                 return True
             elif isinstance(picked_card, Cards.SpecialCard) and ((picked_card.block and top_card.block) or
                                                                  (picked_card.reverse and top_card.reverse) or
-                                                                         (picked_card.draw > 0 and top_card.draw > 0)):
+                                                                 (picked_card.draw > 0 and top_card.draw > 0)):
                 return True
             else:
                 return False
@@ -43,26 +44,33 @@ class Player:
 
     # Function to display a screen that asks player to pick a color
     def AskForAColor(self):
+        colors = {'B': 0, 'G': 0, 'Y': 0, 'R': 0, 'N': 0}
+
+        for card in self.hand:
+            colors[card.color] += 1
+
         width = 1080
 
         blue_button = Button.Button(image=p.image.load("images/button.png"), pos=(width // 2, 200),
-                                    text_input="BLUE", font=Button.get_font(40), base_color="#04122E",
-                                    hovering_color="#0D53DE")
+                                    text_input="BLUE [" + str(colors['B']) + "]",
+                                    font=p.font.SysFont("Comic Sans", 40, True),
+                                    base_color="#082869", hovering_color="#0D53DE")
         green_button = Button.Button(image=p.image.load("images/button.png"), pos=(width // 2, 350),
-                                     text_input="GREEN", font=Button.get_font(40), base_color="#052603",
-                                     hovering_color="#17DE0B")
+                                     text_input="GREEN [" + str(colors['G']) + "]",
+                                     font=p.font.SysFont("Comic Sans", 40, True),
+                                     base_color="#0E6908", hovering_color="#17DE0B")
         yellow_button = Button.Button(image=p.image.load("images/button.png"), pos=(width // 2, 500),
-                                      text_input="YELLOW", font=Button.get_font(40), base_color="#2D3006",
-                                      hovering_color="#DFF007")
+                                      text_input="YELLOW [" + str(colors['Y']) + "]",
+                                      font=p.font.SysFont("Comic Sans", 40, True),
+                                      base_color="#69700F", hovering_color="#DFF007")
         red_button = Button.Button(image=p.image.load("images/button.png"), pos=(width // 2, 650),
-                                   text_input="RED", font=Button.get_font(40), base_color="#2B0404",
-                                   hovering_color="#FA0202")
+                                   text_input="RED [" + str(colors['R']) + "]",
+                                   font=p.font.SysFont("Comic Sans", 40, True),
+                                   base_color="#750B0B", hovering_color="#FA0202")
 
         p.init()
-        p.display.set_caption('Question')
         screen = p.display.set_mode((1080, 720))
-        bg = p.image.load('images/deck.png')
-        bg = p.transform.scale(bg, (1080, 720))
+        bg = p.image.load('images/color_choice.png')
 
         running = True
         while running:
@@ -87,6 +95,7 @@ class Player:
 
             for e in p.event.get():
                 if e.type == p.QUIT:
+                    return 'B'
                     running = False
                 elif e.type == p.MOUSEBUTTONDOWN:
                     if blue_button.checkForInput(p.mouse.get_pos()):
@@ -114,15 +123,23 @@ class Player:
                 color = self.AskForAColor()
                 picked_card.wild_color_choice = color
             else:
-                color = choice(['B', 'G', 'Y', 'R'])
-                picked_card.wild_color_choice = color
-                print("[Log] AI picked " + color + " color!")
+                colors = {'B': 0, 'G': 0, 'Y': 0, 'R': 0, 'N': 0}
+                for card in self.hand:
+                    colors[card.color] += 1
+
+                max_color = max(colors.items(), key=lambda x: x[1])[0]
+
+                picked_card.wild_color_choice = max_color
+                print("[Log] AI picked " + max_color + " color!")
+
         if isinstance(picked_card, Cards.SpecialCard) and picked_card.draw != 0:
             gamestate.queue[1].cards_to_take += picked_card.draw
+
         if isinstance(picked_card, Cards.SpecialCard) and picked_card.reverse:
             current_player = gamestate.queue.pop(0)
             gamestate.queue.reverse()
             gamestate.queue.insert(0, current_player)
+
         if isinstance(picked_card, Cards.SpecialCard) and picked_card.block:
             gamestate.queue[1].blocked = True
 
@@ -150,8 +167,13 @@ class Player:
         coords = []
 
         j = 0
-        for card in self.hand:
-            coords.append([card, (120 + ((width - 2 * 10) / lenP) * j), height - 150])
-            j += 1
+        if lenP > 4:
+            for card in self.hand:
+                coords.append([card, (120 + ((width - 20) / lenP) * j), height - 150])
+                j += 1
+        elif lenP > 0:
+            for card in self.hand:
+                coords.append([card, (220 + ((width - 120) / lenP) * j), height - 150])
+                j += 1
 
         return coords

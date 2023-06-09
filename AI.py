@@ -20,14 +20,14 @@ class AI(Player):
                  "spaghetti", "cheese", "slayer", "dragon", "panda", "donut", "icecream", "girl",
                  "boy", "gurl", "boi"]
         numbers = "0123456789"
-        symbols = "_-.!*$&"
+        symbols = "_- "
 
         nick = ''
         nick += choice(prefixes)
-        nick += symbols[randint(0, 6)]
+        nick += symbols[randint(0, 2)]
         nick += choice(names)
 
-        for _ in range(randint(2, 4)):
+        for _ in range(randint(0, 3)):
             nick += numbers[randint(0, 9)]
 
         return nick

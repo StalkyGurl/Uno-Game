@@ -72,7 +72,7 @@ class GameState:
             self.queue.remove(next_player)
             self.podium.append(next_player)
 
-        ranking = ''
+        ranking = ""
         i = 1
 
         for player in self.podium:
@@ -80,7 +80,44 @@ class GameState:
                 ranking += str(i) + ". " + player.nick + "\n"
                 i += 1
 
-        print(ranking)
+        p.init()
+        screen = p.display.set_mode((1080, 720))
+        bg = p.image.load('images/results.jpg')
+        bg = p.transform.scale(bg, (1080, 720))
+
+        running = True
+
+        while running:
+            screen.fill('black')
+            screen.blit(bg, (0, 0))
+
+            text1 = p.font.SysFont("Comic Sans", 60).render("Podium:", True, "#FFFFFF")
+            text1_rect = text1.get_rect(center=(1080 // 2, 225))
+            screen.blit(text1, text1_rect)
+
+            text_lines = ranking.splitlines()
+            texts = {}
+            text_rects = {}
+
+            colors = [(155, 215, 200),
+                      (215, 165, 15),
+                      (150, 150, 150),
+                      (40, 35, 20)]
+
+            for idx, line in enumerate(text_lines):
+                color = colors[idx % len(colors)]
+                texts[line] = p.font.SysFont("Comic Sans", 50).render(line, True, color)
+                text_rects[line] = texts[line].get_rect(center=(1080 // 2, 325 + idx * 70))
+                screen.blit(texts[line], text_rects[line])
+
+            for e in p.event.get():
+                if e.type == p.QUIT:
+                    running = False
+                elif e.type == p.KEYDOWN:
+                    if e.key == p.K_ESCAPE:
+                        running = False
+
+            p.display.update()
 
     # Function that makes all the actions connected to AI turn
     def AITurn(self, board, gamestate):

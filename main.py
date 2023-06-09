@@ -17,7 +17,7 @@ def main():
     p.display.set_caption('Uno')
     screen = p.display.set_mode((WIDTH, HEIGHT))
     clock = p.time.Clock()
-    bg = p.image.load('images/deck.png')
+    bg = p.image.load('images/menu.png')
     bg = p.transform.scale(bg, (WIDTH, HEIGHT))
 
     main_menu = MainMenu.MainMenu(WIDTH, screen, bg, clock, FPS)

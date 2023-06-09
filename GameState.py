@@ -54,8 +54,8 @@ class GameState:
 
     # Function to check if the game has ended
     def checkEnd(self):
-        if len(self.queue) == 2:
-            print("[Log] The game has ended. Only 2 players left!")
+        if len(self.queue) == 1:
+            print("[Log] The game has ended. Only 1 player left!")
             return True
         else:
             return False
@@ -134,6 +134,9 @@ class GameState:
         width = 1080
         height = 720
 
+        bg = p.image.load('images/deck.png')
+        bg = p.transform.scale(bg, (width, height))
+
         board = Board.Board()
         board.prepare_piles()
         board.deal_the_cards(self.queue)
@@ -184,7 +187,7 @@ class GameState:
                                 pass
 
                         elif draw_rect.collidepoint(e.pos):
-                            if not self.player.hasPlaceableCard(board) and not added_card:
+                            if not added_card:
                                 self.player.pickCard(board)
                                 added_card = True
                                 coords = self.player.genCoords()

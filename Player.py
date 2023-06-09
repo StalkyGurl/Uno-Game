@@ -20,24 +20,19 @@ class Player:
         top_card = board.discard_pile[-1]
         if isinstance(picked_card, Cards.SpecialCard) and picked_card.wild:
             return True
-        elif isinstance(top_card, Cards.SpecialCard) and top_card.wild \
+        elif isinstance(top_card, Cards.SpecialCard) and (top_card.wild or top_card.wild_draw_four) \
                 and top_card.wild_color_choice == picked_card.color:
             return True
-        elif isinstance(top_card, Cards.SpecialCard) and top_card.wild_draw_four and \
-                isinstance(picked_card, Cards.SpecialCard) and picked_card.draw == 2 and \
-                top_card.wild_color_choice == picked_card.color:
+        elif isinstance(top_card, Cards.SpecialCard) and picked_card.color == top_card.color:
             return True
-        elif isinstance(top_card, Cards.SpecialCard):
-            if picked_card.color == top_card.color:
-                return True
-            elif isinstance(picked_card, Cards.SpecialCard) and ((picked_card.block and top_card.block) or
-                                                                 (picked_card.reverse and top_card.reverse) or
-                                                                 (picked_card.draw > 0 and top_card.draw > 0)):
-                return True
-            else:
-                return False
+        elif isinstance(top_card, Cards.SpecialCard) and \
+                isinstance(picked_card, Cards.SpecialCard) and ((picked_card.block and top_card.block) or
+                                                                (picked_card.reverse and top_card.reverse) or
+                                                                (picked_card.draw == 2 and top_card.draw == 2)):
+            return True
         elif picked_card.color == top_card.color or \
-                (not isinstance(picked_card, Cards.SpecialCard) and picked_card.value == top_card.value):
+                (not isinstance(picked_card, Cards.SpecialCard) and not isinstance(top_card, Cards.SpecialCard) and
+                 picked_card.value == top_card.value):
             return True
         else:
             return False

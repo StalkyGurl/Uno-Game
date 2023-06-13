@@ -134,6 +134,7 @@ class Player:
             current_player = gamestate.queue.pop(0)
             gamestate.queue.reverse()
             gamestate.queue.insert(0, current_player)
+            board.reversed_queue = not board.reversed_queue
 
         if isinstance(picked_card, Cards.SpecialCard) and picked_card.block:
             gamestate.queue[1].blocked = True

@@ -17,9 +17,9 @@ class GameState:
 
         self.queue = []
         self.queue.append(self.player)
-        self.queue.append(self.ai1)
-        self.queue.append(self.ai2)
         self.queue.append(self.ai3)
+        self.queue.append(self.ai2)
+        self.queue.append(self.ai1)
 
         self.podium = []
 
@@ -152,7 +152,7 @@ class GameState:
         while running:
             screen.fill('black')
             screen.blit(bg, (0, 0))
-            board.display_cards(self.player, self.ai1, self.ai2, self.ai3, screen)
+            board.display_cards(self.queue[0], self.player, self.ai1, self.ai2, self.ai3, screen)
 
             # Player actions
             for e in p.event.get():

@@ -14,6 +14,7 @@ class Board:
     def __init__(self):
         self.discard_pile = []
         self.draw_pile = []
+        self.reversed_queue = False
 
     def prepare_piles(self):
         card_deck = Cards.generate_list_of_cards()
@@ -40,7 +41,13 @@ class Board:
             for _ in range(7):
                 player.hand.append(self.draw_pile.pop())
 
-    def display_cards(self, p1, a2, a3, a4, screen):
+    def display_cards(self, turn, p1, a2, a3, a4, screen):
+        if self.reversed_queue:
+            arrow = p.image.load('images/lewo.png')
+            screen.blit(arrow, (225, 350))
+        else:
+            arrow = p.image.load('images/prawo.png')
+            screen.blit(arrow, (735, 350))
 
         lenP = len(p1.hand)
         len2 = len(a2.hand)
@@ -48,18 +55,27 @@ class Board:
         len4 = len(a4.hand)
 
         if len2 > 0:
-            a2_name = p.font.SysFont("Comic Sans", 25).render(a2.nick + " [" + str(len2) + "]", True, "#FFFFFF")
+            if turn == a2:
+                a2_name = p.font.SysFont("Comic Sans", 25).render(a2.nick + " [" + str(len2) + "]", True, "#FF7870")
+            else:
+                a2_name = p.font.SysFont("Comic Sans", 25).render(a2.nick + " [" + str(len2) + "]", True, "#FFFFFF")
             a2_name = p.transform.rotate(a2_name, 90)
             a2_name_rect = a2_name.get_rect(center=(20, 275))
             screen.blit(a2_name, a2_name_rect)
 
         if len3 > 0:
-            a3_name = p.font.SysFont("Comic Sans", 25).render(a3.nick + " [" + str(len3) + "]", True, "#FFFFFF")
+            if turn == a3:
+                a3_name = p.font.SysFont("Comic Sans", 25).render(a3.nick + " [" + str(len3) + "]", True, "#FF7870")
+            else:
+                a3_name = p.font.SysFont("Comic Sans", 25).render(a3.nick + " [" + str(len3) + "]", True, "#FFFFFF")
             a3_name_rect = a3_name.get_rect(center=(540, 20))
             screen.blit(a3_name, a3_name_rect)
 
         if len4 > 0:
-            a4_name = p.font.SysFont("Comic Sans", 25).render(a4.nick + " [" + str(len4) + "]", True, "#FFFFFF")
+            if turn == a4:
+                a4_name = p.font.SysFont("Comic Sans", 25).render(a4.nick + " [" + str(len4) + "]", True, "#FF7870")
+            else:
+                a4_name = p.font.SysFont("Comic Sans", 25).render(a4.nick + " [" + str(len4) + "]", True, "#FFFFFF")
             a4_name = p.transform.rotate(a4_name, 270)
             a4_name_rect = a4_name.get_rect(center=(1060, 275))
             screen.blit(a4_name, a4_name_rect)

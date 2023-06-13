@@ -9,11 +9,11 @@ from random import choice
 
 
 class Player:
-    def __init__(self):
+    def __init__(self, nick):
         self.hand = []
         self.cards_to_take = 0
         self.blocked = False
-        self.nick = 'Player'
+        self.nick = nick
 
     # Function to check if card can be placed
     def checkCard(self, picked_card, board):

@@ -8,7 +8,7 @@ from random import choice, randint
 
 class AI(Player):
     def __init__(self):
-        super().__init__()
+        super().__init__('')
         self.nick = self.generateNickname()
 
     # Function to generate random nickname for AI
@@ -36,7 +36,7 @@ class AI(Player):
         pl_female_prefixes = ["piękna", "królowa", "księżniczka", "delikatna", "zabawna", "szalona", "niesamowita",
                               "niezależna", "gadatliwa", "pasywno-agresywna", "nadnaturalna"]
         pl_female_names = ["kapibara", "psiara", "koniara", "kociara", "szynszyla", "Julka", "rywalka",
-                           "zawodniczka", "usterka", "dziewczyna", "polonistka"]
+                           "zawodniczka", "usterka", "dziewczyna", "polonistka", "podżegaczka"]
 
         # Russian
 
@@ -84,7 +84,7 @@ class AI(Player):
         elif language == "rus" and gender == "female":
             nick += choice(rus_female_names)
 
-        if language != "rus":
+        if language != "rus" and len(nick) < 21:
             for _ in range(randint(0, 3)):
                 nick += numbers[randint(0, 9)]
 

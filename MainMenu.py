@@ -15,6 +15,61 @@ class MainMenu():
         self.clock = clock
         self.FPS = FPS
 
+    def askForNick(self):
+        p.init()
+        screen = p.display.set_mode((1080, 720))
+        bg = p.image.load('images/deck.png')
+        bg = p.transform.scale(bg, (1080, 720))
+        clock = p.time.Clock()
+
+        font = p.font.SysFont("Arial", 60)
+
+        input_box = p.Rect(150, 300, 820, 80)
+        color_inactive = p.Color('black')
+        color_active = p.Color('white')
+        color = color_inactive
+        active = False
+        text = ''
+        done = False
+
+        while not done:
+            screen.blit(bg, (0, 0))
+
+            text_title = Button.get_font(50).render("TYPE YOUR NAME AND PRESS ENTER", True, "#000000")
+            text_rect = text_title.get_rect(center=(1080 // 2, 150))
+
+            screen.blit(text_title, text_rect)
+
+            for event in p.event.get():
+                if event.type == p.QUIT:
+                    done = True
+                    game = GameState.GameState("Player")
+                    game.play(self.screen, self.clock, self.FPS)
+                if event.type == p.MOUSEBUTTONDOWN:
+                    if input_box.collidepoint(event.pos):
+                        active = not active
+                    else:
+                        active = False
+                    color = color_active if active else color_inactive
+                if event.type == p.KEYDOWN:
+                    if active:
+                        if event.key == p.K_RETURN:
+                            done = True
+                            game = GameState.GameState(text)
+                            game.play(self.screen, self.clock, self.FPS)
+                        elif event.key == p.K_BACKSPACE:
+                            text = text[:-1]
+                        else:
+                            text += event.unicode
+
+            txt_surface = font.render(str(text), True, color)
+            input_box.w = 820
+            screen.blit(txt_surface, (input_box.x + 5, input_box.y + 5))
+            p.draw.rect(screen, color, input_box, 2)
+
+            p.display.flip()
+            clock.tick(60)
+
     def start(self):
 
         running = True
@@ -42,8 +97,9 @@ class MainMenu():
                     sys.exit()
                 if e.type == p.MOUSEBUTTONDOWN:
                     if PLAY_BUTTON.checkForInput(MENU_MOUSE_POS):
-                        game = GameState.GameState()
-                        game.play(self.screen, self.bg, self.clock, self.FPS)
+                        self.askForNick()
+                        #game = GameState.GameState()
+                        #game.play(self.screen, self.bg, self.clock, self.FPS)
                     if QUIT_BUTTON.checkForInput(MENU_MOUSE_POS):
                         p.quit()
                         sys.exit()

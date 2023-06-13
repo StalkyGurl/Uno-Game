@@ -9,8 +9,8 @@ import Board
 
 
 class GameState:
-    def __init__(self):
-        self.player = Player.Player()
+    def __init__(self, name):
+        self.player = Player.Player(name)
         self.ai1 = AI.AI()
         self.ai2 = AI.AI()
         self.ai3 = AI.AI()
@@ -102,7 +102,7 @@ class GameState:
             colors = [(155, 215, 200),
                       (215, 165, 15),
                       (150, 150, 150),
-                      (40, 35, 20)]
+                      (90, 50, 30)]
 
             for idx, line in enumerate(text_lines):
                 color = colors[idx % len(colors)]
@@ -129,7 +129,7 @@ class GameState:
         self.podium.append(winner)
 
     # The most important function, function to play the game
-    def play(self, screen, bg, clock, FPS):
+    def play(self, screen, clock, FPS):
 
         width = 1080
         height = 720

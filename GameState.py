@@ -106,7 +106,7 @@ class GameState:
 
             for idx, line in enumerate(text_lines):
                 color = colors[idx % len(colors)]
-                texts[line] = p.font.SysFont("Comic Sans", 50).render(line, True, color)
+                texts[line] = p.font.SysFont("Comic Sans", 45).render(line, True, color)
                 text_rects[line] = texts[line].get_rect(center=(1080 // 2, 325 + idx * 70))
                 screen.blit(texts[line], text_rects[line])
 
@@ -150,7 +150,6 @@ class GameState:
         discard_rect = p.Rect(width // 2 + 10, height // 2 - 120, 140, 220)
 
         while running:
-            screen.fill('black')
             screen.blit(bg, (0, 0))
             board.display_cards(self.queue[0], self.player, self.ai1, self.ai2, self.ai3, screen, picked_card)
 

@@ -43,7 +43,10 @@ class MainMenu():
             for event in p.event.get():
                 if event.type == p.QUIT:
                     done = True
-                    game = GameState.GameState("Player")
+                    if len(text) == 0:
+                        game = GameState.GameState("Player")
+                    else:
+                        game = GameState.GameState(text)
                     game.play(self.screen, self.clock, self.FPS)
                 if event.type == p.MOUSEBUTTONDOWN:
                     if input_box.collidepoint(event.pos):
@@ -52,14 +55,24 @@ class MainMenu():
                         active = False
                     color = color_active if active else color_inactive
                 if event.type == p.KEYDOWN:
-                    if active:
+                    if event.key == p.K_ESCAPE:
+                        done = True
+                        if len(text) == 0:
+                            game = GameState.GameState("Player")
+                        else:
+                            game = GameState.GameState(text)
+                        game.play(self.screen, self.clock, self.FPS)
+                    elif active:
                         if event.key == p.K_RETURN:
                             done = True
-                            game = GameState.GameState(text)
+                            if len(text) == 0:
+                                game = GameState.GameState("Player")
+                            else:
+                                game = GameState.GameState(text)
                             game.play(self.screen, self.clock, self.FPS)
                         elif event.key == p.K_BACKSPACE:
                             text = text[:-1]
-                        else:
+                        elif len(text) < 21:
                             text += event.unicode
 
             txt_surface = font.render(str(text), True, color)

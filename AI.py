@@ -84,7 +84,7 @@ class AI(Player):
         elif language == "rus" and gender == "female":
             nick += choice(rus_female_names)
 
-        if language != "rus" and len(nick) < 21:
+        if language != "rus" and len(nick) < 19:
             for _ in range(randint(0, 3)):
                 nick += numbers[randint(0, 9)]
 

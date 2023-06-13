@@ -152,7 +152,7 @@ class GameState:
         while running:
             screen.fill('black')
             screen.blit(bg, (0, 0))
-            board.display_cards(self.queue[0], self.player, self.ai1, self.ai2, self.ai3, screen)
+            board.display_cards(self.queue[0], self.player, self.ai1, self.ai2, self.ai3, screen, picked_card)
 
             # Player actions
             for e in p.event.get():

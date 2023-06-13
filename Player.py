@@ -167,6 +167,9 @@ class Player:
             for card in self.hand:
                 coords.append([card, (120 + ((width - 20) / lenP) * j), height - 150])
                 j += 1
+        elif lenP == 1:
+            card = self.hand[0]
+            coords.append([card, width / 2, height - 150])
         elif lenP > 0:
             for card in self.hand:
                 coords.append([card, (220 + ((width - 120) / lenP) * j), height - 150])

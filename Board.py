@@ -41,7 +41,7 @@ class Board:
             for _ in range(7):
                 player.hand.append(self.draw_pile.pop())
 
-    def display_cards(self, turn, p1, a2, a3, a4, screen):
+    def display_cards(self, turn, p1, a2, a3, a4, screen, picked_card):
         if self.reversed_queue:
             arrow = p.image.load('images/lewo.png')
             screen.blit(arrow, (225, 350))
@@ -118,16 +118,30 @@ class Board:
         j = 0
         if lenP > 4:
             for card in p1.hand:
-                card.drawCard(screen, (120 + ((WIDTH - 20) / lenP) * j), HEIGHT - 150)
+                if card == picked_card:
+                    card.drawCard(screen, (120 + ((WIDTH - 20) / lenP) * j), HEIGHT - 170)
+                else:
+                    card.drawCard(screen, (120 + ((WIDTH - 20) / lenP) * j), HEIGHT - 150)
                 j += 1
+
+        elif lenP == 1:
+            card = p1.hand[0]
+            if card == picked_card:
+                card.drawCard(screen, WIDTH / 2, HEIGHT - 170)
+            else:
+                card.drawCard(screen, WIDTH / 2, HEIGHT - 150)
+
         elif lenP > 0:
             for card in p1.hand:
-                card.drawCard(screen, (220 + ((WIDTH - 120) / lenP) * j), HEIGHT - 150)
+                if card == picked_card:
+                    card.drawCard(screen, (220 + ((WIDTH - 120) / lenP) * j), HEIGHT - 170)
+                else:
+                    card.drawCard(screen, (220 + ((WIDTH - 120) / lenP) * j), HEIGHT - 150)
                 j += 1
 
         if len2 > 20:
             for i in range(20):
-                screen.blit(back_card_l, (40, (150 - ((HEIGHT - 300) / len2) * i + 250)))
+                screen.blit(back_card_l, (40, (150 - ((HEIGHT - 300) / 20) * i + 250)))
         elif len2 > 4:
             for i in range(len2):
                 screen.blit(back_card_l, (40, (150 - ((HEIGHT - 300) / len2) * i + 250)))
@@ -137,7 +151,7 @@ class Board:
 
         if len3 > 20:
             for i in range(20):
-                screen.blit(back_card_s, ((250 + ((WIDTH - 500) / len3) * i), 40))
+                screen.blit(back_card_s, ((250 + ((WIDTH - 500) / 20) * i), 40))
         elif len3 > 4:
             for i in range(len3):
                 screen.blit(back_card_s, ((250 + ((WIDTH - 500) / len3) * i), 40))
@@ -147,7 +161,7 @@ class Board:
 
         if len4 > 20:
             for i in range(20):
-                screen.blit(back_card_r, (WIDTH - 200, (150 - ((HEIGHT - 300) / len4) * i + 250)))
+                screen.blit(back_card_r, (WIDTH - 200, (150 - ((HEIGHT - 300) / 20) * i + 250)))
         elif len4 > 4:
             for i in range(len4):
                 screen.blit(back_card_r, (WIDTH - 200, (150 - ((HEIGHT - 300) / len4) * i + 250)))

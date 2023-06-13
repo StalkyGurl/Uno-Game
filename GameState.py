@@ -194,6 +194,9 @@ class GameState:
                                 if not self.player.hasPlaceableCard(board):
                                     self.switchTurn(board)
                                     added_card = False
+                            else:
+                                self.switchTurn(board)
+                                added_card = False
 
                         else:
                             for coord in coords:

@@ -149,9 +149,10 @@ class GameState:
         draw_rect = p.Rect(width // 2 - 200, height // 2 - 120, 140, 220)
         discard_rect = p.Rect(width // 2 + 10, height // 2 - 120, 140, 220)
 
+        screen.blit(bg, (0, 0))
+        board.display_cards(self.queue[0], self.player, self.ai1, self.ai2, self.ai3, screen, picked_card)
+
         while running:
-            screen.blit(bg, (0, 0))
-            board.display_cards(self.queue[0], self.player, self.ai1, self.ai2, self.ai3, screen, picked_card)
 
             # Player actions
             for e in p.event.get():
@@ -173,6 +174,10 @@ class GameState:
                                     self.switch_turn(board)
                                     winner = self.check_win()
                                     self.podium.append(winner)
+                                    screen.blit(bg, (0, 0))
+                                    board.display_cards(self.queue[0], self.player, self.ai1, self.ai2, self.ai3,
+                                                        screen,
+                                                        picked_card)
 
                                     # When the game ends
                                     if self.check_end():
@@ -190,6 +195,8 @@ class GameState:
                                 self.player.pick_card(board)
                                 added_card = True
                                 coords = self.player.gen_coords()
+                                screen.blit(bg, (0, 0))
+
                                 if not self.player.has_placeable_card(board):
                                     self.switch_turn(board)
                                     added_card = False
@@ -197,17 +204,28 @@ class GameState:
                                 self.switch_turn(board)
                                 added_card = False
 
+                            screen.blit(bg, (0, 0))
+                            board.display_cards(self.queue[0], self.player, self.ai1, self.ai2, self.ai3, screen,
+                                                picked_card)
+
                         else:
                             for coord in coords:
                                 rect = p.Rect(coord[1] - 110, coord[2] - 70, 140, 220)
                                 if rect.collidepoint(e.pos):
                                     picked_card = coord[0]
+                                    screen.blit(bg, (0, 0))
+                                    board.display_cards(self.queue[0], self.player, self.ai1, self.ai2, self.ai3,
+                                                        screen,
+                                                        picked_card)
                                     print("You picked " + picked_card.id + " card!")
 
             # AI actions:
             if len(self.queue) > 0 and self.queue[0] != self.player:
+                p.time.wait(200)
                 self.ai_turn(board)
                 coords = self.player.gen_coords()
+                screen.blit(bg, (0, 0))
+                board.display_cards(self.queue[0], self.player, self.ai1, self.ai2, self.ai3, screen, picked_card)
 
                 # When the game ends
                 if self.check_end():

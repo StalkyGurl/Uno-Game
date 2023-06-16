@@ -124,7 +124,17 @@ class Player:
                 max_color = max(colors.items(), key=lambda x: x[1])[0]
 
                 picked_card.wild_color_choice = max_color
-                print("[Log] AI picked " + max_color + " color!")
+
+                if max_color == 'B':
+                    text = 'blue'
+                elif max_color == 'G':
+                    text = 'green'
+                elif max_color == 'Y':
+                    text = 'yellow'
+                else:
+                    text = 'red'
+
+                print("[Log] AI picked " + text + " color!")
 
         if isinstance(picked_card, Cards.SpecialCard) and picked_card.draw != 0:
             gamestate.queue[1].cards_to_take += picked_card.draw

@@ -1,5 +1,5 @@
 """
-This file contains Board class.
+This file contains Board class
 """
 
 from Player import *

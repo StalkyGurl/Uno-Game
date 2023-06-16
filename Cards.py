@@ -1,5 +1,5 @@
 """
-This file contains Card class and the function to load cards.
+This file contains Card class and the functions to generate the list of cards and to load cards
 """
 
 import pygame as p

@@ -1,5 +1,5 @@
 """
-This file contains MainMenu class.
+This file contains MainMenu class
 """
 
 import sys

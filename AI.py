@@ -1,5 +1,5 @@
 """
-This file contains AI class.
+This file contains AI class
 """
 
 from Player import *

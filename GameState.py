@@ -1,5 +1,5 @@
 """
-This is the main driver class of the game
+This file contains Game State Class that runs the game
 """
 
 import pygame as p
@@ -206,7 +206,7 @@ class GameState:
 
             # AI actions:
             if len(self.queue) > 0 and self.queue[0] != self.player:
-                self.ai_turn(board, self)
+                self.ai_turn(board)
                 coords = self.player.gen_coords()
 
                 # When the game ends

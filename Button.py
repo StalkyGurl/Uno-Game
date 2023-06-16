@@ -1,5 +1,5 @@
 """
-This file contains Button class.
+This file contains Button class
 """
 
 import pygame as p

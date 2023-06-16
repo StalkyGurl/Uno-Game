@@ -5,7 +5,6 @@ This file contains Player class.
 import Cards
 import Button
 import pygame as p
-from random import choice
 
 
 class Player:
@@ -16,7 +15,8 @@ class Player:
         self.nick = nick
 
     # Function to check if card can be placed
-    def checkCard(self, picked_card, board):
+    @staticmethod
+    def check_card(picked_card, board):
         top_card = board.discard_pile[-1]
         if isinstance(picked_card, Cards.SpecialCard) and picked_card.wild:
             return True
@@ -38,7 +38,7 @@ class Player:
             return False
 
     # Function to display a screen that asks player to pick a color
-    def AskForAColor(self):
+    def ask_for_a_color(self):
         colors = {'B': 0, 'G': 0, 'Y': 0, 'R': 0, 'N': 0}
 
         for card in self.hand:
@@ -83,29 +83,28 @@ class Player:
             yellow_button.update(screen)
             red_button.update(screen)
 
-            blue_button.changeColor(p.mouse.get_pos())
-            green_button.changeColor(p.mouse.get_pos())
-            yellow_button.changeColor(p.mouse.get_pos())
-            red_button.changeColor(p.mouse.get_pos())
+            blue_button.change_color(p.mouse.get_pos())
+            green_button.change_color(p.mouse.get_pos())
+            yellow_button.change_color(p.mouse.get_pos())
+            red_button.change_color(p.mouse.get_pos())
 
             for e in p.event.get():
                 if e.type == p.QUIT:
                     return 'B'
-                    running = False
                 elif e.type == p.MOUSEBUTTONDOWN:
-                    if blue_button.checkForInput(p.mouse.get_pos()):
+                    if blue_button.check_for_input(p.mouse.get_pos()):
                         return 'B'
-                    elif green_button.checkForInput(p.mouse.get_pos()):
+                    elif green_button.check_for_input(p.mouse.get_pos()):
                         return 'G'
-                    elif yellow_button.checkForInput(p.mouse.get_pos()):
+                    elif yellow_button.check_for_input(p.mouse.get_pos()):
                         return 'Y'
-                    elif red_button.checkForInput(p.mouse.get_pos()):
+                    elif red_button.check_for_input(p.mouse.get_pos()):
                         return 'R'
                     running = False
             p.display.update()
 
     # Function to make a move
-    def makeMove(self, picked_card, board, gamestate):
+    def make_move(self, picked_card, board, gamestate):
 
         if isinstance(board.discard_pile[-1], Cards.SpecialCard) and board.discard_pile[-1].wild:
             board.discard_pile[-1].wild_color_choice = None
@@ -115,7 +114,7 @@ class Player:
 
         if isinstance(picked_card, Cards.SpecialCard) and picked_card.wild:
             if gamestate.queue[0] == gamestate.player:
-                color = self.AskForAColor()
+                color = self.ask_for_a_color()
                 picked_card.wild_color_choice = color
             else:
                 colors = {'B': 0, 'G': 0, 'Y': 0, 'R': 0, 'N': 0}
@@ -140,20 +139,20 @@ class Player:
             gamestate.queue[1].blocked = True
 
     # Function to check if any card in player's hand can be placed
-    def hasPlaceableCard(self, board):
+    def has_placeable_card(self, board):
         for card in self.hand:
-            if self.checkCard(card, board):
+            if self.check_card(card, board):
                 return True
 
         return False
 
     # Function to pick a card from a draw pile
-    def pickCard(self, board):
+    def pick_card(self, board):
         taken_card = board.draw_pile.pop()
         self.hand.append(taken_card)
 
     # Function to generate coordinates of cards in Player's hand
-    def genCoords(self):
+    def gen_coords(self):
 
         width = 1080
         height = 720

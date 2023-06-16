@@ -12,7 +12,8 @@ class Card:
         self.color = color
         self.id = id  # color + value + natural number [0, 1]
 
-    def drawCard(self, screen, x, y):
+    # Function that draws a card on screen
+    def draw_card(self, screen, x, y):
         cards = load_cards()
         screen.blit(cards[self.color + str(self.value)], (x - 110, y - 70))
 
@@ -22,7 +23,7 @@ class SpecialCard(Card):
                  reverse=False, wild=False, wild_draw_four=False):
         self.color = color
         self.id = id  # here id is: color (or none if Wild card)
-                      # + the name of the card + natural number [0, 3]
+        # + the name of the card + natural number [0, 3]
         self.draw = draw
         self.block = block
         self.reverse = reverse
@@ -30,7 +31,8 @@ class SpecialCard(Card):
         self.wild_draw_four = wild_draw_four
         self.wild_color_choice = None
 
-    def drawCard(self, screen, x, y):
+    # Function that draws a card on screen
+    def draw_card(self, screen, x, y):
         cards = load_cards()
         if self.wild and not self.wild_draw_four:
             screen.blit(cards["wild"], (x - 110, y - 70))
@@ -71,7 +73,6 @@ def generate_list_of_cards():
 
 # Function to load images of cards
 def load_cards():
-
     folder_path = 'images/cards'
 
     # Scaling the all th cards
@@ -88,5 +89,3 @@ def load_cards():
         cards[name] = p.transform.scale(cards[name], (card_width, card_height))
 
     return cards
-
-

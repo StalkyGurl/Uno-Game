@@ -16,6 +16,7 @@ class Board:
         self.draw_pile = []
         self.reversed_queue = False
 
+    # Function that prepares and shuffles piles of cards
     def prepare_piles(self):
         card_deck = Cards.generate_list_of_cards()
         shuffle(card_deck)
@@ -27,6 +28,7 @@ class Board:
                 self.draw_pile = card_deck
                 break
 
+    # Function to complete piles if necessary
     def complete_piles(self):
         if len(self.draw_pile) <= 5:
             cards_to_move = self.discard_pile[:-1]
@@ -36,11 +38,13 @@ class Board:
         elif len(self.discard_pile) == 0:
             self.discard_pile.append(self.draw_pile.pop())
 
+    # Function that deals the cards to all players
     def deal_the_cards(self, players):
         for player in players:
             for _ in range(7):
                 player.hand.append(self.draw_pile.pop())
 
+    # Function that displays cards on screen
     def display_cards(self, turn, p1, a2, a3, a4, screen, picked_card):
         if self.reversed_queue:
             arrow = p.image.load('images/lewo.png')
@@ -113,30 +117,30 @@ class Board:
             else:
                 p.draw.rect(screen, (245, 0, 0), (rectangle_x, rectangle_y, rectangle_width, rectangle_height), 5)
 
-        last_card.drawCard(screen, WIDTH // 2 + 120, HEIGHT // 2 - 50)
+        last_card.draw_card(screen, WIDTH // 2 + 120, HEIGHT // 2 - 50)
 
         j = 0
         if lenP > 4:
             for card in p1.hand:
                 if card == picked_card:
-                    card.drawCard(screen, (120 + ((WIDTH - 20) / lenP) * j), HEIGHT - 170)
+                    card.draw_card(screen, (120 + ((WIDTH - 20) / lenP) * j), HEIGHT - 170)
                 else:
-                    card.drawCard(screen, (120 + ((WIDTH - 20) / lenP) * j), HEIGHT - 150)
+                    card.draw_card(screen, (120 + ((WIDTH - 20) / lenP) * j), HEIGHT - 150)
                 j += 1
 
         elif lenP == 1:
             card = p1.hand[0]
             if card == picked_card:
-                card.drawCard(screen, WIDTH / 2, HEIGHT - 170)
+                card.draw_card(screen, WIDTH / 2, HEIGHT - 170)
             else:
-                card.drawCard(screen, WIDTH / 2, HEIGHT - 150)
+                card.draw_card(screen, WIDTH / 2, HEIGHT - 150)
 
         elif lenP > 0:
             for card in p1.hand:
                 if card == picked_card:
-                    card.drawCard(screen, (220 + ((WIDTH - 120) / lenP) * j), HEIGHT - 170)
+                    card.draw_card(screen, (220 + ((WIDTH - 120) / lenP) * j), HEIGHT - 170)
                 else:
-                    card.drawCard(screen, (220 + ((WIDTH - 120) / lenP) * j), HEIGHT - 150)
+                    card.draw_card(screen, (220 + ((WIDTH - 120) / lenP) * j), HEIGHT - 150)
                 j += 1
 
         if len2 > 20:
@@ -168,4 +172,3 @@ class Board:
         elif len4 > 0:
             for i in range(len4):
                 screen.blit(back_card_r, (WIDTH - 200, (150 - ((HEIGHT - 400) / len4) * i + 250)))
-

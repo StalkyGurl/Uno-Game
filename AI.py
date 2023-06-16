@@ -9,10 +9,11 @@ from random import choice, randint
 class AI(Player):
     def __init__(self):
         super().__init__('')
-        self.nick = self.generateNickname()
+        self.nick = self.generate_nickname()
 
     # Function to generate random nickname for AI
-    def generateNickname(self):
+    @staticmethod
+    def generate_nickname():
 
         # English
 
@@ -23,7 +24,7 @@ class AI(Player):
 
         eng_female_prefixes = ["lady", "miss", "queen", "cute", "stalky", "little", "annoying", "humble"]
         eng_female_names = ["kitten", "panda", "girl", "gurl", "mom", "grandma", "sister",
-                               "granny", "latte", "coffee", "avocado"]
+                            "granny", "latte", "coffee", "avocado"]
 
         # Polish
 
@@ -91,16 +92,16 @@ class AI(Player):
         return nick
 
     # Function to generate random AI move
-    def makeAIMove(self, board, gamestate):
-        if self.hasPlaceableCard(board):
+    def make_ai_move(self, board, gamestate):
+        if self.has_placeable_card(board):
             for card in self.hand:
-                if self.checkCard(card, board):
-                    self.makeMove(card, board, gamestate)
+                if self.check_card(card, board):
+                    self.make_move(card, board, gamestate)
                     print("[Log] " + self.nick + " put " + card.id + " card.")
                     break
         else:
-            self.pickCard(board)
+            self.pick_card(board)
             print("[Log] " + self.nick + " picked a card from a pile.")
-            if self.checkCard(self.hand[-1], board):
-                self.makeMove(self.hand[-1], board, gamestate)
+            if self.check_card(self.hand[-1], board):
+                self.make_move(self.hand[-1], board, gamestate)
                 print("[Log] " + self.nick + " put picked card (" + board.discard_pile[-1].id + ")")

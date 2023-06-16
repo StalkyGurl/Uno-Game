@@ -7,15 +7,17 @@ import pygame as p
 import Button
 import GameState
 
-class MainMenu():
-    def __init__(self, width, screen, bg, clock, FPS):
+
+class MainMenu:
+    def __init__(self, width, screen, bg, clock, fps):
         self.width = width
         self.screen = screen
         self.bg = bg
         self.clock = clock
-        self.FPS = FPS
+        self.FPS = fps
 
-    def askForNick(self):
+    # Function that displays a screen that asks the player for their nickname
+    def ask_for_nick(self):
         p.init()
         screen = p.display.set_mode((1080, 720))
         bg = p.image.load('images/deck.png')
@@ -72,7 +74,7 @@ class MainMenu():
                             game.play(self.screen, self.clock, self.FPS)
                         elif event.key == p.K_BACKSPACE:
                             text = text[:-1]
-                        elif len(text) < 21:
+                        elif len(text) < 20:
                             text += event.unicode
 
             txt_surface = font.render(str(text), True, color)
@@ -81,27 +83,29 @@ class MainMenu():
             p.draw.rect(screen, color, input_box, 2)
 
             p.display.flip()
-            clock.tick(60)
+            clock.tick(30)
 
+    # Function that runs the game
     def start(self):
 
         running = True
         while running:
             self.screen.blit(self.bg, (0, 0))
-            MENU_MOUSE_POS = p.mouse.get_pos()
-            MENU_TEXT = Button.get_font(70).render("UNO CARD GAME", True, "#000000")
-            MENU_RECT = MENU_TEXT.get_rect(center=(self.width // 2, 100))
+            menu_mouse_pos = p.mouse.get_pos()
+            menu_text = Button.get_font(70).render("UNO CARD GAME", True, "#000000")
+            menu_rect = menu_text.get_rect(center=(self.width // 2, 100))
 
-            PLAY_BUTTON = Button.Button(image=p.image.load("images/button.png"), pos=(self.width // 2, 300),
-                                text_input="PLAY", font=Button.get_font(40), base_color="#000000",
-                                hovering_color="#FFFFFF")
-            QUIT_BUTTON = Button.Button(image=p.image.load("images/button.png"), pos=(self.width // 2, 500),
-                                 text_input="QUIT", font=Button.get_font(40), base_color="#000000", hovering_color="#FFFFFF")
+            play_button = Button.Button(image=p.image.load("images/button.png"), pos=(self.width // 2, 300),
+                                        text_input="PLAY", font=Button.get_font(40), base_color="#000000",
+                                        hovering_color="#FFFFFF")
+            quit_button = Button.Button(image=p.image.load("images/button.png"), pos=(self.width // 2, 500),
+                                        text_input="QUIT", font=Button.get_font(40), base_color="#000000",
+                                        hovering_color="#FFFFFF")
 
-            self.screen.blit(MENU_TEXT, MENU_RECT)
+            self.screen.blit(menu_text, menu_rect)
 
-            for button in [PLAY_BUTTON, QUIT_BUTTON]:
-                button.changeColor(MENU_MOUSE_POS)
+            for button in [play_button, quit_button]:
+                button.change_color(menu_mouse_pos)
                 button.update(self.screen)
 
             for e in p.event.get():
@@ -109,11 +113,9 @@ class MainMenu():
                     p.quit()
                     sys.exit()
                 if e.type == p.MOUSEBUTTONDOWN:
-                    if PLAY_BUTTON.checkForInput(MENU_MOUSE_POS):
-                        self.askForNick()
-                        #game = GameState.GameState()
-                        #game.play(self.screen, self.bg, self.clock, self.FPS)
-                    if QUIT_BUTTON.checkForInput(MENU_MOUSE_POS):
+                    if play_button.check_for_input(menu_mouse_pos):
+                        self.ask_for_nick()
+                    if quit_button.check_for_input(menu_mouse_pos):
                         p.quit()
                         sys.exit()
                 if e.type == p.KEYDOWN:

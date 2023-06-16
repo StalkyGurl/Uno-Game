@@ -1,5 +1,5 @@
 """
-This is the main driver class in the game.
+This is the main driver class of the game
 """
 
 import pygame as p
@@ -24,7 +24,7 @@ class GameState:
         self.podium = []
 
     # Function that switches turns
-    def switchTurn(self, board):
+    def switch_turn(self, board):
         board.complete_piles()
         old_turn = self.queue.pop(0)
         self.queue.append(old_turn)
@@ -34,17 +34,17 @@ class GameState:
             self.queue[0].blocked = False
             player_text = "Player" if self.queue[0] == self.player else self.queue[0].nick
             print("[Log] " + player_text + " is blocked!")
-            self.switchTurn(board)
+            self.switch_turn(board)
         elif self.queue[0].cards_to_take > 0:
             player_text = "Player" if self.queue[0] == self.player else self.queue[0].nick
             print("[Log] " + player_text + " needs to take " + str(self.queue[0].cards_to_take) + " cards!")
             for _ in range(self.queue[0].cards_to_take):
-                self.queue[0].pickCard(board)
+                self.queue[0].pick_card(board)
             self.queue[0].cards_to_take = 0
-            self.switchTurn(board)
+            self.switch_turn(board)
 
     # Function to check if someone won
-    def checkWin(self):
+    def check_win(self):
         for player in self.queue:
             if len(player.hand) == 0:
                 self.queue.remove(player)
@@ -53,15 +53,15 @@ class GameState:
                 return player
 
     # Function to check if the game has ended
-    def checkEnd(self):
+    def check_end(self):
         if len(self.queue) == 1:
             print("[Log] The game has ended. Only 1 player left!")
             return True
         else:
             return False
 
-    # Function to print end game screen and ranking
-    def printEndScreen(self):
+    # Function to print end game screen and podium
+    def print_end_screen(self):
         while len(self.queue) > 0:
             min_cards = 1000
             next_player = None
@@ -120,16 +120,16 @@ class GameState:
             p.display.update()
 
     # Function that makes all the actions connected to AI turn
-    def AITurn(self, board, gamestate):
+    def ai_turn(self, board, ):
         activeAI = self.queue[0]
-        activeAI.makeAIMove(board, gamestate)
-        self.switchTurn(board)
+        activeAI.make_ai_move(board, self)
+        self.switch_turn(board)
 
-        winner = self.checkWin()
+        winner = self.check_win()
         self.podium.append(winner)
 
-    # The most important function, function to play the game
-    def play(self, screen, clock, FPS):
+    # Function to run the game
+    def play(self, screen, clock, fps):
 
         width = 1080
         height = 720
@@ -144,7 +144,7 @@ class GameState:
         running = True
         picked_card = None
         added_card = False
-        coords = self.player.genCoords()
+        coords = self.player.gen_coords()
 
         draw_rect = p.Rect(width // 2 - 200, height // 2 - 120, 140, 220)
         discard_rect = p.Rect(width // 2 + 10, height // 2 - 120, 140, 220)
@@ -160,24 +160,24 @@ class GameState:
                 elif e.type == p.KEYDOWN:
                     if e.key == p.K_ESCAPE:
                         running = False
-                        self.printEndScreen()
+                        self.print_end_screen()
                 elif e.type == p.MOUSEBUTTONDOWN:
                     if len(self.queue) > 0 and self.queue[0] == self.player:
                         if discard_rect.collidepoint(e.pos):
                             try:
-                                if self.player.checkCard(picked_card, board):
-                                    self.player.makeMove(picked_card, board, self)
+                                if self.player.check_card(picked_card, board):
+                                    self.player.make_move(picked_card, board, self)
                                     picked_card = None
                                     added_card = False
-                                    coords = self.player.genCoords()
-                                    self.switchTurn(board)
-                                    winner = self.checkWin()
+                                    coords = self.player.gen_coords()
+                                    self.switch_turn(board)
+                                    winner = self.check_win()
                                     self.podium.append(winner)
 
                                     # When the game ends
-                                    if self.checkEnd():
+                                    if self.check_end():
                                         running = False
-                                        self.printEndScreen()
+                                        self.print_end_screen()
 
                                 else:
                                     print("You cannot place this card!")
@@ -187,14 +187,14 @@ class GameState:
 
                         elif draw_rect.collidepoint(e.pos):
                             if not added_card:
-                                self.player.pickCard(board)
+                                self.player.pick_card(board)
                                 added_card = True
-                                coords = self.player.genCoords()
-                                if not self.player.hasPlaceableCard(board):
-                                    self.switchTurn(board)
+                                coords = self.player.gen_coords()
+                                if not self.player.has_placeable_card(board):
+                                    self.switch_turn(board)
                                     added_card = False
                             else:
-                                self.switchTurn(board)
+                                self.switch_turn(board)
                                 added_card = False
 
                         else:
@@ -206,13 +206,13 @@ class GameState:
 
             # AI actions:
             if len(self.queue) > 0 and self.queue[0] != self.player:
-                self.AITurn(board, self)
-                coords = self.player.genCoords()
+                self.ai_turn(board, self)
+                coords = self.player.gen_coords()
 
                 # When the game ends
-                if self.checkEnd():
+                if self.check_end():
                     running = False
-                    self.printEndScreen()
+                    self.print_end_screen()
 
             p.display.flip()
-            clock.tick(FPS)
+            clock.tick(fps)

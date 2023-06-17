@@ -28,21 +28,23 @@ class GameState:
 
         self.podium = []
 
+        self.log = []
+
     # Function that switches turns
     def switch_turn(self, board):
         board.complete_piles()
         old_turn = self.queue.pop(0)
         self.queue.append(old_turn)
-        player_text = "Player's" if self.queue[0] == self.player else self.queue[0].nick
-        print("[Log] Now it's " + player_text + "'s turn!")
+        player_text = "Player" if self.queue[0] == self.player else self.queue[0].nick
+        self.log.append("[Log] Now it's " + player_text + "'s turn!")
         if self.queue[0].blocked:
             self.queue[0].blocked = False
             player_text = "Player" if self.queue[0] == self.player else self.queue[0].nick
-            print("[Log] " + player_text + " is blocked!")
+            self.log.append("[Log] " + player_text + " is blocked!")
             self.switch_turn(board)
         elif self.queue[0].cards_to_take > 0:
             player_text = "Player" if self.queue[0] == self.player else self.queue[0].nick
-            print("[Log] " + player_text + " needs to take " + str(self.queue[0].cards_to_take) + " cards!")
+            self.log.append("[Log] " + player_text + " needs to take " + str(self.queue[0].cards_to_take) + " cards!")
             for _ in range(self.queue[0].cards_to_take):
                 self.queue[0].pick_card(board)
             self.queue[0].cards_to_take = 0
@@ -54,13 +56,13 @@ class GameState:
             if len(player.hand) == 0:
                 self.queue.remove(player)
                 player_text = "player" if player == self.player else player.nick
-                print("[Log] Player " + player_text + " finished the game!")
+                self.log.append("[Log] Player " + player_text + " finished the game!")
                 return player
 
     # Function to check if the game has ended
     def check_end(self):
         if len(self.queue) == 1:
-            print("[Log] The game has ended. Only 1 player left!")
+            self.log.append("[Log] The game has ended. Only 1 player left!")
             return True
         else:
             return False
@@ -93,7 +95,7 @@ class GameState:
         running = True
 
         while running:
-            screen.fill('black')
+            screen.fill((0, 0, 0))
             screen.blit(bg, (0, 0))
 
             text1 = p.font.SysFont("Comic Sans", 60).render("Podium:", True, "#FFFFFF")
@@ -168,17 +170,40 @@ class GameState:
 
             p.display.update()
 
+    # Function to display log on the screen
+    def display_log(self, screen):
+        log = []
+        for text in self.log:
+            if len(text) > 36:
+                log.append(text[:36])
+                log.append("-" + text[36:])
+            else:
+                log.append(text)
+
+        if len(log) > 32:
+            log = log[-32:]
+
+        for i, text in enumerate(log):
+            text = p.font.SysFont("Arial", 20).render(text, True, "#FFFFFF")
+            text_rect = text.get_rect()
+            text_rect.left = 1090
+            text_rect.top = 5 + (i * 22)
+            screen.blit(text, text_rect)
+
     # Function to run the game
-    def play(self, screen, clock, fps):
+    def play(self, clock, fps):
 
         global CARDS
         CARDS = Cards.load_cards()
 
         width = 1080
         height = 720
+        log_space = 300
 
         bg = p.image.load('images/deck.png')
         bg = p.transform.scale(bg, (width, height))
+
+        screen = p.display.set_mode((width + log_space, height))
 
         board = Board.Board()
         board.prepare_piles()
@@ -192,6 +217,7 @@ class GameState:
         draw_rect = p.Rect(width // 2 - 200, height // 2 - 120, 140, 220)
         discard_rect = p.Rect(width // 2 + 10, height // 2 - 120, 140, 220)
 
+        screen.fill((0, 0, 0))
         screen.blit(bg, (0, 0))
         board.display_cards(self.queue[0], self.player, self.ai1, self.ai2, self.ai3, screen, picked_card, CARDS)
 
@@ -211,10 +237,13 @@ class GameState:
                             try:
                                 if self.player.check_card(picked_card, board):
                                     self.player.make_move(picked_card, board, self)
+                                    screen = p.display.set_mode((width + log_space, height))
                                     self.switch_turn(board)
+                                    screen.fill((0, 0, 0))
                                     screen.blit(bg, (0, 0))
                                     board.display_cards(self.queue[0], self.player, self.ai1, self.ai2, self.ai3,
                                                         screen, picked_card, CARDS)
+                                    self.display_log(screen)
                                     for coord in coords:
                                         if coord[0] == picked_card:
                                             start_coords = (coord[1], coord[2])
@@ -224,12 +253,15 @@ class GameState:
                                     if len(self.player.hand) == 1:
                                         if not self.player.display_uno_button(screen,
                                                                               clock, [self.ai1.nick,
-                                                                                      self.ai2.nick, self.ai3.nick]):
+                                                                                      self.ai2.nick,
+                                                                                      self.ai3.nick], self):
                                             for _ in range(5):
                                                 self.player.hand.append(board.draw_pile.pop())
+                                        screen.fill((0, 0, 0))
                                         screen.blit(bg, (0, 0))
                                         board.display_cards(self.queue[0], self.player, self.ai1, self.ai2, self.ai3,
                                                             screen, picked_card, CARDS)
+                                        self.display_log(screen)
                                     picked_card = None
                                     added_card = False
                                     coords = self.player.gen_coords()
@@ -242,7 +274,12 @@ class GameState:
                                         self.print_end_screen()
 
                                 else:
-                                    print("You cannot place this card!")
+                                    self.log.append("You cannot place this card!")
+                                    screen.fill((0, 0, 0))
+                                    screen.blit(bg, (0, 0))
+                                    board.display_cards(self.queue[0], self.player, self.ai1, self.ai2, self.ai3,
+                                                        screen, picked_card, CARDS)
+                                    self.display_log(screen)
 
                             except:
                                 pass
@@ -253,6 +290,7 @@ class GameState:
                                 self.animate_card((440, 340), (540, 520), self.player.hand[-1], board, screen)
                                 added_card = True
                                 coords = self.player.gen_coords()
+                                screen.fill((0, 0, 0))
                                 screen.blit(bg, (0, 0))
 
                                 if not self.player.has_placeable_card(board):
@@ -262,28 +300,34 @@ class GameState:
                                 self.switch_turn(board)
                                 added_card = False
 
+                            screen.fill((0, 0, 0))
                             screen.blit(bg, (0, 0))
                             board.display_cards(self.queue[0], self.player, self.ai1, self.ai2, self.ai3, screen,
                                                 picked_card, CARDS)
+                            self.display_log(screen)
 
                         else:
                             for coord in coords:
                                 rect = p.Rect(coord[1] - 110, coord[2] - 70, 140, 220)
                                 if rect.collidepoint(e.pos):
                                     picked_card = coord[0]
+                                    screen.fill((0, 0, 0))
                                     screen.blit(bg, (0, 0))
                                     board.display_cards(self.queue[0], self.player, self.ai1, self.ai2, self.ai3,
                                                         screen,
                                                         picked_card, CARDS)
-                                    print("You picked " + picked_card.id + " card!")
+                                    self.log.append("You picked " + picked_card.id + " card!")
+                                    self.display_log(screen)
 
             # AI actions:
             if len(self.queue) > 0 and self.queue[0] != self.player:
                 self.ai_turn(board, screen)
                 coords = self.player.gen_coords()
+                screen.fill((0, 0, 0))
                 screen.blit(bg, (0, 0))
                 board.display_cards(self.queue[0], self.player, self.ai1, self.ai2, self.ai3,
                                     screen, picked_card, CARDS)
+                self.display_log(screen)
 
                 # When the game ends
                 if self.check_end():

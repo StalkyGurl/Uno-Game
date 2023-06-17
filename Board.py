@@ -123,9 +123,9 @@ class Board:
         if lenP > 4:
             for card in p1.hand:
                 if card == picked_card:
-                    card.draw_card(screen, (120 + ((WIDTH - 20) / lenP) * j), HEIGHT - 170, cards)
+                    card.draw_card(screen, (120 + ((WIDTH - 50) / lenP) * j), HEIGHT - 170, cards)
                 else:
-                    card.draw_card(screen, (120 + ((WIDTH - 20) / lenP) * j), HEIGHT - 150, cards)
+                    card.draw_card(screen, (120 + ((WIDTH - 50) / lenP) * j), HEIGHT - 150, cards)
                 j += 1
 
         elif lenP == 1:

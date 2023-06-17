@@ -125,12 +125,13 @@ class GameState:
             p.display.update()
 
     # Function that makes all the actions connected to AI turn
-    def ai_turn(self, board, ):
+    def ai_turn(self, board, screen):
+        coord_dict = {self.ai1: (220, 275), self.ai2: (540, 220), self.ai3: (860, 275)}
         activeAI = self.queue[0]
         p.time.wait(1000)
         activeAI.make_ai_move(board, self)
         self.switch_turn(board)
-
+        self.animate_card(coord_dict[activeAI], (660, 310), board.discard_pile[-1], board, screen)
         winner = self.check_win()
         self.podium.append(winner)
 
@@ -158,8 +159,10 @@ class GameState:
 
             screen.blit(bg, (0, 0))
             board.display_cards(self.queue[0], self.player, self.ai1, self.ai2, self.ai3, screen, None, CARDS)
-            last_card = board.discard_pile[-2]
-            last_card.draw_card(screen, 660, 310, CARDS)
+
+            if len(board.discard_pile) >= 2:
+                last_card = board.discard_pile[-2]
+                last_card.draw_card(screen, 660, 310, CARDS)
 
             card.draw_card(screen, x, y, CARDS)
 
@@ -277,7 +280,7 @@ class GameState:
 
             # AI actions:
             if len(self.queue) > 0 and self.queue[0] != self.player:
-                self.ai_turn(board)
+                self.ai_turn(board, screen)
                 coords = self.player.gen_coords()
                 screen.blit(bg, (0, 0))
                 board.display_cards(self.queue[0], self.player, self.ai1, self.ai2, self.ai3,

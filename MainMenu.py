@@ -49,7 +49,7 @@ class MainMenu:
                         game = GameState.GameState("Player")
                     else:
                         game = GameState.GameState(text)
-                    game.play(self.screen, self.clock, self.FPS)
+                    game.play(self.clock, self.FPS)
                 if event.type == p.MOUSEBUTTONDOWN:
                     if input_box.collidepoint(event.pos):
                         active = not active
@@ -63,7 +63,7 @@ class MainMenu:
                             game = GameState.GameState("Player")
                         else:
                             game = GameState.GameState(text)
-                        game.play(self.screen, self.clock, self.FPS)
+                        game.play(self.clock, self.FPS)
                     elif active:
                         if event.key == p.K_RETURN:
                             done = True
@@ -71,7 +71,7 @@ class MainMenu:
                                 game = GameState.GameState("Player")
                             else:
                                 game = GameState.GameState(text)
-                            game.play(self.screen, self.clock, self.FPS)
+                            game.play(self.clock, self.FPS)
                         elif event.key == p.K_BACKSPACE:
                             text = text[:-1]
                         elif len(text) < 20:

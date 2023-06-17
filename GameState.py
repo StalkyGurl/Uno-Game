@@ -11,7 +11,7 @@ import Board
 import sys
 
 CARDS = dict()
-
+SHOW_LOG = False
 
 class GameState:
     def __init__(self, name):
@@ -139,6 +139,7 @@ class GameState:
 
     # Function to animate card
     def animate_card(self, start_pos, end_pos, card, board, screen):
+        global SHOW_LOG
 
         bg = p.image.load('images/deck.png')
         bg = p.transform.scale(bg, (1080, 720))
@@ -151,10 +152,26 @@ class GameState:
         dy = (end_y - y) / total_frames
 
         for frame in range(total_frames):
-            for event in p.event.get():
-                if event.type == p.QUIT:
+            for e in p.event.get():
+                if e.type == p.QUIT:
                     p.quit()
                     sys.exit()
+                elif e.type == p.KEYDOWN:
+                    if e.key == p.K_l:
+                        SHOW_LOG = not SHOW_LOG
+                        if SHOW_LOG:
+                            screen = p.display.set_mode((1380, 720))
+                            screen.fill((0, 0, 0))
+                            screen.blit(bg, (0, 0))
+                            board.display_cards(self.queue[0], self.player, self.ai1, self.ai2, self.ai3,
+                                                screen, None, CARDS)
+                            self.display_log(screen)
+                        else:
+                            screen = p.display.set_mode((1080, 720))
+                            screen.fill((0, 0, 0))
+                            screen.blit(bg, (0, 0))
+                            board.display_cards(self.queue[0], self.player, self.ai1, self.ai2, self.ai3,
+                                                screen, None, CARDS)
 
             x += dx
             y += dy
@@ -194,6 +211,7 @@ class GameState:
     def play(self, clock, fps):
 
         global CARDS
+        global SHOW_LOG
         CARDS = Cards.load_cards()
 
         width = 1080
@@ -203,7 +221,7 @@ class GameState:
         bg = p.image.load('images/deck.png')
         bg = p.transform.scale(bg, (width, height))
 
-        screen = p.display.set_mode((width + log_space, height))
+        screen = p.display.set_mode((width, height))
 
         board = Board.Board()
         board.prepare_piles()
@@ -221,8 +239,8 @@ class GameState:
         screen.blit(bg, (0, 0))
         board.display_cards(self.queue[0], self.player, self.ai1, self.ai2, self.ai3, screen, picked_card, CARDS)
 
+        SHOW_LOG = False
         while running:
-
             # Player actions
             for e in p.event.get():
                 if e.type == p.QUIT:
@@ -231,13 +249,29 @@ class GameState:
                     if e.key == p.K_ESCAPE:
                         running = False
                         self.print_end_screen()
+                    if e.key == p.K_l:
+                        SHOW_LOG = not SHOW_LOG
+                        if SHOW_LOG:
+                            screen = p.display.set_mode((width + log_space, height))
+                            screen.fill((0, 0, 0))
+                            screen.blit(bg, (0, 0))
+                            board.display_cards(self.queue[0], self.player, self.ai1, self.ai2, self.ai3,
+                                                screen, picked_card, CARDS)
+                            self.display_log(screen)
+                        else:
+                            screen = p.display.set_mode((width, height))
+                            screen.fill((0, 0, 0))
+                            screen.blit(bg, (0, 0))
+                            board.display_cards(self.queue[0], self.player, self.ai1, self.ai2, self.ai3,
+                                                screen, picked_card, CARDS)
                 elif e.type == p.MOUSEBUTTONDOWN:
                     if len(self.queue) > 0 and self.queue[0] == self.player:
                         if discard_rect.collidepoint(e.pos):
                             try:
                                 if self.player.check_card(picked_card, board):
                                     self.player.make_move(picked_card, board, self)
-                                    screen = p.display.set_mode((width + log_space, height))
+                                    if SHOW_LOG:
+                                        screen = p.display.set_mode((width + log_space, height))
                                     self.switch_turn(board)
                                     screen.fill((0, 0, 0))
                                     screen.blit(bg, (0, 0))
@@ -279,7 +313,8 @@ class GameState:
                                     screen.blit(bg, (0, 0))
                                     board.display_cards(self.queue[0], self.player, self.ai1, self.ai2, self.ai3,
                                                         screen, picked_card, CARDS)
-                                    self.display_log(screen)
+                                    if SHOW_LOG:
+                                        self.display_log(screen)
 
                             except:
                                 pass
@@ -304,7 +339,8 @@ class GameState:
                             screen.blit(bg, (0, 0))
                             board.display_cards(self.queue[0], self.player, self.ai1, self.ai2, self.ai3, screen,
                                                 picked_card, CARDS)
-                            self.display_log(screen)
+                            if SHOW_LOG:
+                                self.display_log(screen)
 
                         else:
                             for coord in coords:
@@ -317,7 +353,8 @@ class GameState:
                                                         screen,
                                                         picked_card, CARDS)
                                     self.log.append("You picked " + picked_card.id + " card!")
-                                    self.display_log(screen)
+                                    if SHOW_LOG:
+                                        self.display_log(screen)
 
             # AI actions:
             if len(self.queue) > 0 and self.queue[0] != self.player:
@@ -327,7 +364,8 @@ class GameState:
                 screen.blit(bg, (0, 0))
                 board.display_cards(self.queue[0], self.player, self.ai1, self.ai2, self.ai3,
                                     screen, picked_card, CARDS)
-                self.display_log(screen)
+                if SHOW_LOG:
+                    self.display_log(screen)
 
                 # When the game ends
                 if self.check_end():

@@ -41,7 +41,7 @@ class Board:
     # Function that deals the cards to all players
     def deal_the_cards(self, players):
         for player in players:
-            for _ in range(3):
+            for _ in range(7):
                 player.hand.append(self.draw_pile.pop())
 
     # Function that displays cards on screen

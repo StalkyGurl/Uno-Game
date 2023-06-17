@@ -29,8 +29,8 @@ class MainMenu:
         input_box = p.Rect(150, 300, 820, 80)
         color_inactive = p.Color('black')
         color_active = p.Color('white')
-        color = color_inactive
-        active = False
+        color = color_active
+        active = True
         text = ''
         done = False
 
@@ -79,7 +79,7 @@ class MainMenu:
 
             txt_surface = font.render(str(text), True, color)
             input_box.w = 820
-            screen.blit(txt_surface, (input_box.x + 5, input_box.y + 5))
+            screen.blit(txt_surface, (input_box.x + 10, input_box.y + 5))
             p.draw.rect(screen, color, input_box, 2)
 
             p.display.flip()

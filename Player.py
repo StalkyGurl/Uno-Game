@@ -22,10 +22,12 @@ class Player:
         top_card = board.discard_pile[-1]
         if isinstance(picked_card, Cards.SpecialCard) and picked_card.wild:
             return True
-        elif isinstance(top_card, Cards.SpecialCard) and (top_card.wild or top_card.wild_draw_four) \
-                and top_card.wild_color_choice == picked_card.color:
+        elif isinstance(top_card, Cards.SpecialCard) and top_card.wild and \
+                top_card.wild_color_choice == picked_card.color:
             return True
         elif isinstance(top_card, Cards.SpecialCard) and picked_card.color == top_card.color:
+            return True
+        elif isinstance(picked_card, Cards.SpecialCard) and picked_card.color == top_card.color:
             return True
         elif isinstance(top_card, Cards.SpecialCard) and \
                 isinstance(picked_card, Cards.SpecialCard) and ((picked_card.block and top_card.block) or

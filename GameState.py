@@ -8,6 +8,7 @@ import Cards
 import Player
 import AI
 import Board
+import sys
 
 CARDS = dict()
 
@@ -126,12 +127,45 @@ class GameState:
     # Function that makes all the actions connected to AI turn
     def ai_turn(self, board, ):
         activeAI = self.queue[0]
-        p.time.wait(200)
+        p.time.wait(1000)
         activeAI.make_ai_move(board, self)
         self.switch_turn(board)
 
         winner = self.check_win()
         self.podium.append(winner)
+
+    # Function to animate card
+    def animate_card(self, start_pos, end_pos, card, board, screen):
+
+        bg = p.image.load('images/deck.png')
+        bg = p.transform.scale(bg, (1080, 720))
+
+        x, y = start_pos
+        end_x, end_y = end_pos
+
+        total_frames = 20
+        dx = (end_x - x) / total_frames
+        dy = (end_y - y) / total_frames
+
+        for frame in range(total_frames):
+            for event in p.event.get():
+                if event.type == p.QUIT:
+                    p.quit()
+                    sys.exit()
+
+            x += dx
+            y += dy
+
+            screen.blit(bg, (0, 0))
+            board.display_cards(self.queue[0], self.player, self.ai1, self.ai2, self.ai3, screen, None, CARDS)
+            last_card = board.discard_pile[-2]
+            last_card.draw_card(screen, 660, 310, CARDS)
+
+            card.draw_card(screen, x, y, CARDS)
+
+            p.display.update()
+
+            p.time.delay(3)
 
     # Function to run the game
     def play(self, screen, clock, fps):
@@ -176,9 +210,16 @@ class GameState:
                             try:
                                 if self.player.check_card(picked_card, board):
                                     self.player.make_move(picked_card, board, self)
+                                    self.switch_turn(board)
                                     screen.blit(bg, (0, 0))
                                     board.display_cards(self.queue[0], self.player, self.ai1, self.ai2, self.ai3,
                                                         screen, picked_card, CARDS)
+                                    for coord in coords:
+                                        if coord[0] == picked_card:
+                                            start_coords = (coord[1], coord[2])
+                                            break
+                                    self.animate_card(start_coords, (660, 310), picked_card, board, screen)
+
                                     if len(self.player.hand) == 1:
                                         if not self.player.display_uno_button(screen,
                                                                               clock, [self.ai1.nick,
@@ -191,7 +232,6 @@ class GameState:
                                     picked_card = None
                                     added_card = False
                                     coords = self.player.gen_coords()
-                                    self.switch_turn(board)
                                     winner = self.check_win()
                                     self.podium.append(winner)
 

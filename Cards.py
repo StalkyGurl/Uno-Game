@@ -5,6 +5,8 @@ This file contains Card class and the functions to generate the list of cards an
 import pygame as p
 import os
 
+CARDS = dict()
+
 
 class Card:
     def __init__(self, value, color, id):
@@ -13,9 +15,9 @@ class Card:
         self.id = id  # color + value + natural number [0, 1]
 
     # Function that draws a card on screen
-    def draw_card(self, screen, x, y):
-        cards = load_cards()
-        screen.blit(cards[self.color + str(self.value)], (x - 110, y - 70))
+    def draw_card(self, screen, x, y, cards):
+        screen.blit(cards[self.color + "_back"], (x - 110, y - 70))
+        screen.blit(cards[str(self.value)], (x - 110, y - 70))
 
 
 class SpecialCard(Card):
@@ -32,18 +34,20 @@ class SpecialCard(Card):
         self.wild_color_choice = None
 
     # Function that draws a card on screen
-    def draw_card(self, screen, x, y):
-        cards = load_cards()
+    def draw_card(self, screen, x, y, cards):
         if self.wild and not self.wild_draw_four:
             screen.blit(cards["wild"], (x - 110, y - 70))
         elif self.wild and self.wild_draw_four:
-            screen.blit(cards["wild_draw_4"], (x - 110, y - 70))
+            screen.blit(cards["wild+4"], (x - 110, y - 70))
         elif self.block:
-            screen.blit(cards[self.color + "_block"], (x - 110, y - 70))
+            screen.blit(cards[self.color + "_back"], (x - 110, y - 70))
+            screen.blit(cards["block"], (x - 110, y - 70))
         elif self.reverse:
-            screen.blit(cards[self.color + "_reverse"], (x - 110, y - 70))
+            screen.blit(cards[self.color + "_back"], (x - 110, y - 70))
+            screen.blit(cards["rev"], (x - 110, y - 70))
         else:
-            screen.blit(cards[self.color + "_plus_two"], (x - 100, y - 70))
+            screen.blit(cards[self.color + "_back"], (x - 110, y - 70))
+            screen.blit(cards["+2"], (x - 110, y - 70))
 
 
 # Function to generate the list of all cards in the game
@@ -73,6 +77,7 @@ def generate_list_of_cards():
 
 # Function to load images of cards
 def load_cards():
+
     folder_path = 'images/cards'
 
     # Scaling the all th cards

@@ -45,7 +45,7 @@ class Board:
                 player.hand.append(self.draw_pile.pop())
 
     # Function that displays cards on screen
-    def display_cards(self, turn, p1, a2, a3, a4, screen, picked_card):
+    def display_cards(self, turn, p1, a2, a3, a4, screen, picked_card, cards):
         if self.reversed_queue:
             arrow = p.image.load('images/lewo.png')
             screen.blit(arrow, (225, 350))
@@ -117,30 +117,30 @@ class Board:
             else:
                 p.draw.rect(screen, (245, 0, 0), (rectangle_x, rectangle_y, rectangle_width, rectangle_height), 5)
 
-        last_card.draw_card(screen, WIDTH // 2 + 120, HEIGHT // 2 - 50)
+        last_card.draw_card(screen, WIDTH // 2 + 120, HEIGHT // 2 - 50, cards)
 
         j = 0
         if lenP > 4:
             for card in p1.hand:
                 if card == picked_card:
-                    card.draw_card(screen, (120 + ((WIDTH - 20) / lenP) * j), HEIGHT - 170)
+                    card.draw_card(screen, (120 + ((WIDTH - 20) / lenP) * j), HEIGHT - 170, cards)
                 else:
-                    card.draw_card(screen, (120 + ((WIDTH - 20) / lenP) * j), HEIGHT - 150)
+                    card.draw_card(screen, (120 + ((WIDTH - 20) / lenP) * j), HEIGHT - 150, cards)
                 j += 1
 
         elif lenP == 1:
             card = p1.hand[0]
             if card == picked_card:
-                card.draw_card(screen, WIDTH / 2, HEIGHT - 170)
+                card.draw_card(screen, WIDTH / 2, HEIGHT - 170, cards)
             else:
-                card.draw_card(screen, WIDTH / 2, HEIGHT - 150)
+                card.draw_card(screen, WIDTH / 2, HEIGHT - 150, cards)
 
         elif lenP > 0:
             for card in p1.hand:
                 if card == picked_card:
-                    card.draw_card(screen, (220 + ((WIDTH - 120) / lenP) * j), HEIGHT - 170)
+                    card.draw_card(screen, (220 + ((WIDTH - 120) / lenP) * j), HEIGHT - 170, cards)
                 else:
-                    card.draw_card(screen, (220 + ((WIDTH - 120) / lenP) * j), HEIGHT - 150)
+                    card.draw_card(screen, (220 + ((WIDTH - 120) / lenP) * j), HEIGHT - 150, cards)
                 j += 1
 
         if len2 > 20:

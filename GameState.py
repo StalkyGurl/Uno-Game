@@ -3,9 +3,13 @@ This file contains Game State Class that runs the game
 """
 
 import pygame as p
+
+import Cards
 import Player
 import AI
 import Board
+
+CARDS = dict()
 
 
 class GameState:
@@ -132,6 +136,9 @@ class GameState:
     # Function to run the game
     def play(self, screen, clock, fps):
 
+        global CARDS
+        CARDS = Cards.load_cards()
+
         width = 1080
         height = 720
 
@@ -151,7 +158,7 @@ class GameState:
         discard_rect = p.Rect(width // 2 + 10, height // 2 - 120, 140, 220)
 
         screen.blit(bg, (0, 0))
-        board.display_cards(self.queue[0], self.player, self.ai1, self.ai2, self.ai3, screen, picked_card)
+        board.display_cards(self.queue[0], self.player, self.ai1, self.ai2, self.ai3, screen, picked_card, CARDS)
 
         while running:
 
@@ -171,7 +178,7 @@ class GameState:
                                     self.player.make_move(picked_card, board, self)
                                     screen.blit(bg, (0, 0))
                                     board.display_cards(self.queue[0], self.player, self.ai1, self.ai2, self.ai3,
-                                                        screen, picked_card)
+                                                        screen, picked_card, CARDS)
                                     if len(self.player.hand) == 1:
                                         if not self.player.display_uno_button(screen,
                                                                               clock, [self.ai1.nick,
@@ -180,7 +187,7 @@ class GameState:
                                                 self.player.hand.append(board.draw_pile.pop())
                                         screen.blit(bg, (0, 0))
                                         board.display_cards(self.queue[0], self.player, self.ai1, self.ai2, self.ai3,
-                                                            screen, picked_card)
+                                                            screen, picked_card, CARDS)
                                     picked_card = None
                                     added_card = False
                                     coords = self.player.gen_coords()
@@ -215,7 +222,7 @@ class GameState:
 
                             screen.blit(bg, (0, 0))
                             board.display_cards(self.queue[0], self.player, self.ai1, self.ai2, self.ai3, screen,
-                                                picked_card)
+                                                picked_card, CARDS)
 
                         else:
                             for coord in coords:
@@ -225,7 +232,7 @@ class GameState:
                                     screen.blit(bg, (0, 0))
                                     board.display_cards(self.queue[0], self.player, self.ai1, self.ai2, self.ai3,
                                                         screen,
-                                                        picked_card)
+                                                        picked_card, CARDS)
                                     print("You picked " + picked_card.id + " card!")
 
             # AI actions:
@@ -233,7 +240,8 @@ class GameState:
                 self.ai_turn(board)
                 coords = self.player.gen_coords()
                 screen.blit(bg, (0, 0))
-                board.display_cards(self.queue[0], self.player, self.ai1, self.ai2, self.ai3, screen, picked_card)
+                board.display_cards(self.queue[0], self.player, self.ai1, self.ai2, self.ai3,
+                                    screen, picked_card, CARDS)
 
                 # When the game ends
                 if self.check_end():

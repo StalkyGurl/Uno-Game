@@ -25,6 +25,9 @@ class Player:
         elif isinstance(top_card, Cards.SpecialCard) and top_card.wild and \
                 top_card.wild_color_choice == picked_card.color:
             return True
+        elif isinstance(top_card, Cards.SpecialCard) and isinstance(picked_card, Cards.SpecialCard) and \
+                top_card.wild and top_card.wild_color_choice == picked_card.color:
+            return True
         elif isinstance(top_card, Cards.SpecialCard) and picked_card.color == top_card.color:
             return True
         elif isinstance(picked_card, Cards.SpecialCard) and picked_card.color == top_card.color:
@@ -111,7 +114,7 @@ class Player:
     def display_uno_button(self, screen, clock, players):
         uno_button = Button.Button(image=p.image.load("images/button.png"), pos=(850, 640),
                                     text_input="UNO!", font=p.font.SysFont("Comic Sans", 40, True),
-                                    base_color="#007B00", hovering_color="#00FF01")
+                                    base_color="#007B00", hovering_color="#FFFFFF")
         display_time = 1.5
         start_time = time.time()
 

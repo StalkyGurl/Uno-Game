@@ -144,7 +144,7 @@ class GameState:
         x, y = start_pos
         end_x, end_y = end_pos
 
-        total_frames = 20
+        total_frames = 30
         dx = (end_x - x) / total_frames
         dy = (end_y - y) / total_frames
 
@@ -167,8 +167,6 @@ class GameState:
             card.draw_card(screen, x, y, CARDS)
 
             p.display.update()
-
-            p.time.delay(3)
 
     # Function to run the game
     def play(self, screen, clock, fps):
@@ -252,6 +250,7 @@ class GameState:
                         elif draw_rect.collidepoint(e.pos):
                             if not added_card:
                                 self.player.pick_card(board)
+                                self.animate_card((440, 340), (540, 520), self.player.hand[-1], board, screen)
                                 added_card = True
                                 coords = self.player.gen_coords()
                                 screen.blit(bg, (0, 0))

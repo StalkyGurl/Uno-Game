@@ -122,6 +122,7 @@ class GameState:
     # Function that makes all the actions connected to AI turn
     def ai_turn(self, board, ):
         activeAI = self.queue[0]
+        p.time.wait(200)
         activeAI.make_ai_move(board, self)
         self.switch_turn(board)
 
@@ -168,16 +169,24 @@ class GameState:
                             try:
                                 if self.player.check_card(picked_card, board):
                                     self.player.make_move(picked_card, board, self)
+                                    screen.blit(bg, (0, 0))
+                                    board.display_cards(self.queue[0], self.player, self.ai1, self.ai2, self.ai3,
+                                                        screen, picked_card)
+                                    if len(self.player.hand) == 1:
+                                        if not self.player.display_uno_button(screen,
+                                                                              clock, [self.ai1.nick,
+                                                                                      self.ai2.nick, self.ai3.nick]):
+                                            for _ in range(5):
+                                                self.player.hand.append(board.draw_pile.pop())
+                                        screen.blit(bg, (0, 0))
+                                        board.display_cards(self.queue[0], self.player, self.ai1, self.ai2, self.ai3,
+                                                            screen, picked_card)
                                     picked_card = None
                                     added_card = False
                                     coords = self.player.gen_coords()
                                     self.switch_turn(board)
                                     winner = self.check_win()
                                     self.podium.append(winner)
-                                    screen.blit(bg, (0, 0))
-                                    board.display_cards(self.queue[0], self.player, self.ai1, self.ai2, self.ai3,
-                                                        screen,
-                                                        picked_card)
 
                                     # When the game ends
                                     if self.check_end():
@@ -221,7 +230,6 @@ class GameState:
 
             # AI actions:
             if len(self.queue) > 0 and self.queue[0] != self.player:
-                p.time.wait(200)
                 self.ai_turn(board)
                 coords = self.player.gen_coords()
                 screen.blit(bg, (0, 0))

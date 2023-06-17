@@ -5,6 +5,8 @@ This file contains Player class
 import Cards
 import Button
 import pygame as p
+import time
+from random import choice
 
 
 class Player:
@@ -102,6 +104,36 @@ class Player:
                         return 'R'
                     running = False
             p.display.update()
+
+    # Function to display the uno button
+    def display_uno_button(self, screen, clock, players):
+        uno_button = Button.Button(image=p.image.load("images/button.png"), pos=(850, 640),
+                                    text_input="UNO!", font=p.font.SysFont("Comic Sans", 40, True),
+                                    base_color="#007B00", hovering_color="#00FF01")
+        display_time = 1.5
+        start_time = time.time()
+
+        while time.time() - start_time < display_time:
+            menu_mouse_pos = p.mouse.get_pos()
+
+            uno_button.change_color(menu_mouse_pos)
+            uno_button.update(screen)
+
+            for e in p.event.get():
+                if e.type == p.QUIT:
+                    p.quit()
+                    quit()
+                if e.type == p.MOUSEBUTTONDOWN:
+                    if uno_button.check_for_input(menu_mouse_pos):
+                        print("You: UNO!")
+                        return True
+
+            p.display.update()
+            clock.tick(30)
+
+        random_player = choice(players)
+        print(random_player + ": STOP UNO!")
+        return False
 
     # Function to make a move
     def make_move(self, picked_card, board, gamestate):

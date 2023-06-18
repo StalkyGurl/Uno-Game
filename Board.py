@@ -47,11 +47,11 @@ class Board:
     # Function that displays cards on screen
     def display_cards(self, turn, p1, a2, a3, a4, screen, picked_card, cards):
         if self.reversed_queue:
-            arrow = p.image.load('images/lewo.png')
-            screen.blit(arrow, (225, 350))
-        else:
             arrow = p.image.load('images/prawo.png')
             screen.blit(arrow, (735, 350))
+        else:
+            arrow = p.image.load('images/lewo.png')
+            screen.blit(arrow, (225, 350))
 
         lenP = len(p1.hand)
         len2 = len(a2.hand)
@@ -123,9 +123,9 @@ class Board:
         if lenP > 4:
             for card in p1.hand:
                 if card == picked_card:
-                    card.draw_card(screen, (120 + ((WIDTH - 50) / lenP) * j), HEIGHT - 170, cards)
+                    card.draw_card(screen, (140 + ((WIDTH - 110) / lenP) * j), HEIGHT - 170, cards)
                 else:
-                    card.draw_card(screen, (120 + ((WIDTH - 50) / lenP) * j), HEIGHT - 150, cards)
+                    card.draw_card(screen, (140 + ((WIDTH - 110) / lenP) * j), HEIGHT - 150, cards)
                 j += 1
 
         elif lenP == 1:
@@ -138,9 +138,9 @@ class Board:
         elif lenP > 0:
             for card in p1.hand:
                 if card == picked_card:
-                    card.draw_card(screen, (220 + ((WIDTH - 120) / lenP) * j), HEIGHT - 170, cards)
+                    card.draw_card(screen, (250 + ((WIDTH - 150) / lenP) * j), HEIGHT - 170, cards)
                 else:
-                    card.draw_card(screen, (220 + ((WIDTH - 120) / lenP) * j), HEIGHT - 150, cards)
+                    card.draw_card(screen, (250 + ((WIDTH - 150) / lenP) * j), HEIGHT - 150, cards)
                 j += 1
 
         if len2 > 20:

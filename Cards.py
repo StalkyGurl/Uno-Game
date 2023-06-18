@@ -19,6 +19,10 @@ class Card:
         screen.blit(cards[self.color + "_back"], (x - 110, y - 70))
         screen.blit(cards[str(self.value)], (x - 110, y - 70))
 
+    # Function to return the card's name
+    def translate_card(self):
+        color_dict = {'B': 'Blue ', 'G': 'Green ', 'Y': 'Yellow ', 'R': 'Red '}
+        return color_dict[self.color] + str(self.value)
 
 class SpecialCard(Card):
     def __init__(self, color, id, draw=0, block=False,
@@ -49,6 +53,22 @@ class SpecialCard(Card):
             screen.blit(cards[self.color + "_back"], (x - 110, y - 70))
             screen.blit(cards["+2"], (x - 110, y - 70))
 
+    # Function to return the card's name
+    def translate_card(self):
+        if self.wild_draw_four:
+            return "Wild Draw 4"
+        elif self.wild:
+            return "Wild"
+        elif self.block:
+            func = "Skip "
+        elif self.reverse:
+            func = "Reverse "
+        elif self.draw:
+            func = "Draw 2 "
+
+        color_dict = {'B': 'blue', 'G': 'green', 'Y': 'yellow', 'R': 'red'}
+
+        return func + color_dict[self.color]
 
 # Function to generate the list of all cards in the game
 def generate_list_of_cards():

@@ -97,7 +97,7 @@ class AI(Player):
             for card in self.hand:
                 if self.check_card(card, board):
                     self.make_move(card, board, gamestate)
-                    gamestate.log.append("[Log] " + self.nick + " put " + card.id + " card.")
+                    gamestate.log.append("[Log] " + self.nick + " put " + card.translate_card() + " card.")
                     if len(self.hand) == 1:
                         print(self.nick + ": UNO!")
                     break
@@ -106,6 +106,7 @@ class AI(Player):
             gamestate.log.append("[Log] " + self.nick + " picked a card from a pile.")
             if self.check_card(self.hand[-1], board):
                 self.make_move(self.hand[-1], board, gamestate)
-                gamestate.log.append("[Log] " + self.nick + " put picked card (" + board.discard_pile[-1].id + ")")
+                gamestate.log.append("[Log] " + self.nick + " put picked card (" +
+                                     board.discard_pile[-1].translate_card() + ")")
                 if len(self.hand) == 1:
                     gamestate.log.append(self.nick + ": UNO!")

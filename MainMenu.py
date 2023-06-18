@@ -92,8 +92,8 @@ class MainMenu:
         while running:
             self.screen.blit(self.bg, (0, 0))
             menu_mouse_pos = p.mouse.get_pos()
-            menu_text = Button.get_font(70).render("UNO CARD GAME", True, "#000000")
-            menu_rect = menu_text.get_rect(center=(self.width // 2, 100))
+            menu_text = Button.get_font(68).render("UNO CARD GAME", True, "#000000")
+            menu_rect = menu_text.get_rect(center=(self.width // 2, 90))
 
             play_button = Button.Button(image=p.image.load("images/button.png"), pos=(self.width // 2, 300),
                                         text_input="PLAY", font=Button.get_font(40), base_color="#000000",

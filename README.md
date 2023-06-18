@@ -3,11 +3,11 @@
 
 # Official "basic" Uno Rules
 - everyone starts with 7 cards
-- if no cards, you have to pick a card from a Draw pile
-- if you can play the picked card, play it (or not)
+- if no cards to put, you have to pick a card from a Draw pile
+- if you can play the picked card, play it (or skip your turn)
 - if first card on a Discard pile is a Wild card, return it to the Draw pile
-- you can put down only one card at the time, so no 2 draw two or 2 wild draw four during the same turn
-- if not yelled Uno, player has to get 2 cards
+- you can put down only one card at the time
+- if not told Uno, player has to get 2 cards
 - if first card is a special card, the effect apllies to the current player, except: Wild cards
 
 A standard deck of Uno cards consists of 108 cards:
@@ -43,5 +43,4 @@ Wild – This card represents all four colors,
 
 Wild Draw Four – This acts just like the wild card except that 
         the next player also has to draw four cards as well as forfeit 
-        his/her turn. With this card, you must have no other alternative 
-        cards to play that matches the color of the card previously played.
+        his/her turn.

@@ -13,6 +13,7 @@ import sys
 CARDS = dict()
 SHOW_LOG = False
 
+
 class GameState:
     def __init__(self, name):
         self.player = Player.Player(name)
@@ -22,9 +23,9 @@ class GameState:
 
         self.queue = []
         self.queue.append(self.player)
-        self.queue.append(self.ai3)
-        self.queue.append(self.ai2)
         self.queue.append(self.ai1)
+        self.queue.append(self.ai2)
+        self.queue.append(self.ai3)
 
         self.podium = []
 
@@ -147,7 +148,7 @@ class GameState:
         x, y = start_pos
         end_x, end_y = end_pos
 
-        total_frames = 30
+        total_frames = 20
         dx = (end_x - x) / total_frames
         dy = (end_y - y) / total_frames
 
@@ -161,23 +162,15 @@ class GameState:
                         SHOW_LOG = not SHOW_LOG
                         if SHOW_LOG:
                             screen = p.display.set_mode((1380, 720))
-                            screen.fill((0, 0, 0))
-                            screen.blit(bg, (0, 0))
-                            board.display_cards(self.queue[0], self.player, self.ai1, self.ai2, self.ai3,
-                                                screen, None, CARDS)
                             self.display_log(screen)
                         else:
                             screen = p.display.set_mode((1080, 720))
-                            screen.fill((0, 0, 0))
-                            screen.blit(bg, (0, 0))
-                            board.display_cards(self.queue[0], self.player, self.ai1, self.ai2, self.ai3,
-                                                screen, None, CARDS)
 
             x += dx
             y += dy
 
-            screen.blit(bg, (0, 0))
-            board.display_cards(self.queue[0], self.player, self.ai1, self.ai2, self.ai3, screen, None, CARDS)
+            self.update_screen(screen, bg, board, None)
+            self.display_log(screen)
 
             if len(board.discard_pile) >= 2:
                 last_card = board.discard_pile[-2]
@@ -207,6 +200,12 @@ class GameState:
             text_rect.top = 5 + (i * 22)
             screen.blit(text, text_rect)
 
+    # Function to update the screen
+    def update_screen(self, screen, bg, board, picked_card):
+        screen.fill((0, 0, 0))
+        screen.blit(bg, (0, 0))
+        board.display_cards(self.queue[0], self.player, self.ai1, self.ai2, self.ai3, screen, picked_card, CARDS)
+
     # Function to run the game
     def play(self, clock, fps):
 
@@ -227,6 +226,21 @@ class GameState:
         board.prepare_piles()
         board.deal_the_cards(self.queue)
 
+        if isinstance(board.discard_pile[-1], Cards.SpecialCard):
+            if board.discard_pile[-1].block:
+                self.log.append("You are blocked!")
+                self.switch_turn(board)
+            elif board.discard_pile[-1].reverse:
+                current_player = self.queue.pop(0)
+                self.queue.reverse()
+                self.queue.insert(0, current_player)
+                board.reversed_queue = not board.reversed_queue
+            elif board.discard_pile[-1].draw:
+                self.log.append("You have to take 2 cards!")
+                self.player.hand.append(board.draw_pile.pop())
+                self.player.hand.append(board.draw_pile.pop())
+                self.switch_turn(board)
+
         running = True
         picked_card = None
         added_card = False
@@ -235,9 +249,7 @@ class GameState:
         draw_rect = p.Rect(width // 2 - 200, height // 2 - 120, 140, 220)
         discard_rect = p.Rect(width // 2 + 10, height // 2 - 120, 140, 220)
 
-        screen.fill((0, 0, 0))
-        screen.blit(bg, (0, 0))
-        board.display_cards(self.queue[0], self.player, self.ai1, self.ai2, self.ai3, screen, picked_card, CARDS)
+        self.update_screen(screen, bg, board, picked_card)
 
         SHOW_LOG = False
         while running:
@@ -253,30 +265,22 @@ class GameState:
                         SHOW_LOG = not SHOW_LOG
                         if SHOW_LOG:
                             screen = p.display.set_mode((width + log_space, height))
-                            screen.fill((0, 0, 0))
-                            screen.blit(bg, (0, 0))
-                            board.display_cards(self.queue[0], self.player, self.ai1, self.ai2, self.ai3,
-                                                screen, picked_card, CARDS)
+                            self.update_screen(screen, bg, board, picked_card)
                             self.display_log(screen)
                         else:
                             screen = p.display.set_mode((width, height))
-                            screen.fill((0, 0, 0))
-                            screen.blit(bg, (0, 0))
-                            board.display_cards(self.queue[0], self.player, self.ai1, self.ai2, self.ai3,
-                                                screen, picked_card, CARDS)
-                elif e.type == p.MOUSEBUTTONDOWN:
+                            self.update_screen(screen, bg, board, picked_card)
+                elif e.type == p.MOUSEBUTTONDOWN and e.button == 1:
                     if len(self.queue) > 0 and self.queue[0] == self.player:
                         if discard_rect.collidepoint(e.pos):
                             try:
                                 if self.player.check_card(picked_card, board):
                                     self.player.make_move(picked_card, board, self)
+                                    self.log.append("You put " + picked_card.translate_card() + " card!")
                                     if SHOW_LOG:
                                         screen = p.display.set_mode((width + log_space, height))
                                     self.switch_turn(board)
-                                    screen.fill((0, 0, 0))
-                                    screen.blit(bg, (0, 0))
-                                    board.display_cards(self.queue[0], self.player, self.ai1, self.ai2, self.ai3,
-                                                        screen, picked_card, CARDS)
+                                    self.update_screen(screen, bg, board, picked_card)
                                     self.display_log(screen)
                                     for coord in coords:
                                         if coord[0] == picked_card:
@@ -289,13 +293,12 @@ class GameState:
                                                                               clock, [self.ai1.nick,
                                                                                       self.ai2.nick,
                                                                                       self.ai3.nick], self):
-                                            for _ in range(5):
-                                                self.player.hand.append(board.draw_pile.pop())
-                                        screen.fill((0, 0, 0))
-                                        screen.blit(bg, (0, 0))
-                                        board.display_cards(self.queue[0], self.player, self.ai1, self.ai2, self.ai3,
-                                                            screen, picked_card, CARDS)
-                                        self.display_log(screen)
+                                            self.player.hand.append(board.draw_pile.pop())
+                                            self.player.hand.append(board.draw_pile.pop())
+                                        self.update_screen(screen, bg, board, picked_card)
+
+                                        if SHOW_LOG:
+                                            self.display_log(screen)
                                     picked_card = None
                                     added_card = False
                                     coords = self.player.gen_coords()
@@ -309,10 +312,7 @@ class GameState:
 
                                 else:
                                     self.log.append("You cannot place this card!")
-                                    screen.fill((0, 0, 0))
-                                    screen.blit(bg, (0, 0))
-                                    board.display_cards(self.queue[0], self.player, self.ai1, self.ai2, self.ai3,
-                                                        screen, picked_card, CARDS)
+                                    self.update_screen(screen, bg, board, picked_card)
                                     if SHOW_LOG:
                                         self.display_log(screen)
 
@@ -322,6 +322,7 @@ class GameState:
                         elif draw_rect.collidepoint(e.pos):
                             if not added_card:
                                 self.player.pick_card(board)
+                                self.log.append("You picked a card from a draw pile!")
                                 self.animate_card((440, 340), (540, 520), self.player.hand[-1], board, screen)
                                 added_card = True
                                 coords = self.player.gen_coords()
@@ -331,14 +332,15 @@ class GameState:
                                 if not self.player.has_placeable_card(board):
                                     self.switch_turn(board)
                                     added_card = False
+                                    picked_card = None
+                                else:
+                                    self.log.append("Click on draw pile again to skip your turn.")
                             else:
                                 self.switch_turn(board)
                                 added_card = False
+                                picked_card = None
 
-                            screen.fill((0, 0, 0))
-                            screen.blit(bg, (0, 0))
-                            board.display_cards(self.queue[0], self.player, self.ai1, self.ai2, self.ai3, screen,
-                                                picked_card, CARDS)
+                            self.update_screen(screen, bg, board, picked_card)
                             if SHOW_LOG:
                                 self.display_log(screen)
 
@@ -347,12 +349,8 @@ class GameState:
                                 rect = p.Rect(coord[1] - 110, coord[2] - 70, 140, 220)
                                 if rect.collidepoint(e.pos):
                                     picked_card = coord[0]
-                                    screen.fill((0, 0, 0))
-                                    screen.blit(bg, (0, 0))
-                                    board.display_cards(self.queue[0], self.player, self.ai1, self.ai2, self.ai3,
-                                                        screen,
-                                                        picked_card, CARDS)
-                                    self.log.append("You picked " + picked_card.id + " card!")
+                                    self.update_screen(screen, bg, board, picked_card)
+                                    self.log.append("You picked " + picked_card.translate_card() + " card!")
                                     if SHOW_LOG:
                                         self.display_log(screen)
 
@@ -360,10 +358,7 @@ class GameState:
             if len(self.queue) > 0 and self.queue[0] != self.player:
                 self.ai_turn(board, screen)
                 coords = self.player.gen_coords()
-                screen.fill((0, 0, 0))
-                screen.blit(bg, (0, 0))
-                board.display_cards(self.queue[0], self.player, self.ai1, self.ai2, self.ai3,
-                                    screen, picked_card, CARDS)
+                self.update_screen(screen, bg, board, picked_card)
                 if SHOW_LOG:
                     self.display_log(screen)
 

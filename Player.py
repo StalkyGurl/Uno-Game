@@ -23,7 +23,7 @@ class Player:
         if isinstance(picked_card, Cards.SpecialCard) and picked_card.wild:
             return True
         elif isinstance(top_card, Cards.SpecialCard) and not isinstance(picked_card, Cards.SpecialCard) and \
-                    top_card.wild and top_card.wild_color_choice == picked_card.color:
+                top_card.wild and top_card.wild_color_choice == picked_card.color:
             return True
         elif isinstance(top_card, Cards.SpecialCard) and isinstance(picked_card, Cards.SpecialCard) and \
                 top_card.wild and top_card.wild_color_choice == picked_card.color:
@@ -113,8 +113,8 @@ class Player:
     # Function to display the uno button
     def display_uno_button(self, screen, clock, players, gamestate):
         uno_button = Button.Button(image=p.image.load("images/button.png"), pos=(850, 640),
-                                    text_input="UNO!", font=p.font.SysFont("Comic Sans", 40, True),
-                                    base_color="#007B00", hovering_color="#FFFFFF")
+                                   text_input="UNO!", font=p.font.SysFont("Comic Sans", 40, True),
+                                   base_color="#007B00", hovering_color="#FFFFFF")
         display_time = 1.5
         start_time = time.time()
 
@@ -128,10 +128,13 @@ class Player:
                 if e.type == p.QUIT:
                     p.quit()
                     quit()
-                if e.type == p.MOUSEBUTTONDOWN:
+                if e.type == p.MOUSEBUTTONDOWN and e.button == 1:
                     if uno_button.check_for_input(menu_mouse_pos):
                         gamestate.log.append("You: UNO!")
                         return True
+                elif e.type == p.MOUSEBUTTONDOWN and e.button == 3:
+                    gamestate.log.append("You: UNO!")
+                    return True
 
             p.display.update()
             clock.tick(30)
@@ -142,7 +145,6 @@ class Player:
 
     # Function to make a move
     def make_move(self, picked_card, board, gamestate):
-
         if isinstance(board.discard_pile[-1], Cards.SpecialCard) and board.discard_pile[-1].wild:
             board.discard_pile[-1].wild_color_choice = None
 
@@ -211,14 +213,14 @@ class Player:
         j = 0
         if lenP > 4:
             for card in self.hand:
-                coords.append([card, (120 + ((width - 50) / lenP) * j), height - 150])
+                coords.append([card, (140 + ((width - 110) / lenP) * j), height - 150])
                 j += 1
         elif lenP == 1:
             card = self.hand[0]
             coords.append([card, width / 2, height - 150])
         elif lenP > 0:
             for card in self.hand:
-                coords.append([card, (220 + ((width - 120) / lenP) * j), height - 150])
+                coords.append([card, (250 + ((width - 150) / lenP) * j), height - 150])
                 j += 1
 
         return coords

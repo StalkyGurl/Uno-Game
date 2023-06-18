@@ -99,7 +99,7 @@ class AI(Player):
                     self.make_move(card, board, gamestate)
                     gamestate.log.append("[Log] " + self.nick + " put " + card.translate_card() + " card.")
                     if len(self.hand) == 1:
-                        print(self.nick + ": UNO!")
+                        gamestate.log.append(self.nick + ": UNO!")
                     break
         else:
             self.pick_card(board)

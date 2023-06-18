@@ -93,15 +93,28 @@ class AI(Player):
 
     # Function to generate random AI move
     def make_ai_move(self, board, gamestate):
+        wilds = []
+        made_move = False
         if self.has_placeable_card(board):
             for card in self.hand:
-                if self.check_card(card, board):
+                # If the card is wild, save it for later
+                if isinstance(card, Cards.SpecialCard) and card.wild:
+                    wilds.append(card)
+                elif self.check_card(card, board):
                     self.make_move(card, board, gamestate)
+                    made_move = True
                     gamestate.log.append("[Log] " + self.nick + " put " + card.translate_card() + " card.")
                     if len(self.hand) == 1:
                         gamestate.log.append(self.nick + ": UNO!")
                     break
+            # Use wild card
+            if not made_move:
+                self.make_move(wilds[0], board, gamestate)
+                gamestate.log.append("[Log] " + self.nick + " put " + wilds[0].translate_card() + " card.")
+                if len(self.hand) == 1:
+                    gamestate.log.append(self.nick + ": UNO!")
         else:
+            # Pick a card if there is no card to place
             self.pick_card(board)
             gamestate.log.append("[Log] " + self.nick + " picked a card from a pile.")
             if self.check_card(self.hand[-1], board):

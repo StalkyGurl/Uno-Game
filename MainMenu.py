@@ -31,8 +31,8 @@ class MainMenu:
         color_active = p.Color('white')
         color = color_active
         active = True
-        text = ''
         done = False
+        text = ''
 
         while not done:
             screen.blit(bg, (0, 0))
@@ -43,6 +43,7 @@ class MainMenu:
             screen.blit(text_title, text_rect)
 
             for event in p.event.get():
+                # If press quit, start the game
                 if event.type == p.QUIT:
                     done = True
                     if len(text) == 0:
@@ -50,6 +51,7 @@ class MainMenu:
                     else:
                         game = GameState.GameState(text)
                     game.play(self.clock, self.FPS)
+                # Clicking on text input
                 if event.type == p.MOUSEBUTTONDOWN:
                     if input_box.collidepoint(event.pos):
                         active = not active
@@ -57,6 +59,7 @@ class MainMenu:
                         active = False
                     color = color_active if active else color_inactive
                 if event.type == p.KEYDOWN:
+                    # If press esc, start the game
                     if event.key == p.K_ESCAPE:
                         done = True
                         if len(text) == 0:
@@ -64,6 +67,7 @@ class MainMenu:
                         else:
                             game = GameState.GameState(text)
                         game.play(self.clock, self.FPS)
+                    # If press enter while text input is active, start the game
                     elif active:
                         if event.key == p.K_RETURN:
                             done = True
@@ -72,11 +76,14 @@ class MainMenu:
                             else:
                                 game = GameState.GameState(text)
                             game.play(self.clock, self.FPS)
+                        # Deleting input
                         elif event.key == p.K_BACKSPACE:
                             text = text[:-1]
+                        # Typing
                         elif len(text) < 20:
                             text += event.unicode
 
+            # Rendering text on screen
             txt_surface = font.render(str(text), True, color)
             input_box.w = 820
             screen.blit(txt_surface, (input_box.x + 10, input_box.y + 5))

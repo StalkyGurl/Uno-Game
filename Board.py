@@ -46,11 +46,12 @@ class Board:
 
     # Function that displays cards on screen
     def display_cards(self, turn, p1, a2, a3, a4, screen, picked_card, cards):
+        # Show arrows
         if self.reversed_queue:
-            arrow = p.image.load('images/prawo.png')
+            arrow = p.image.load('images/right.png')
             screen.blit(arrow, (735, 350))
         else:
-            arrow = p.image.load('images/lewo.png')
+            arrow = p.image.load('images/left.png')
             screen.blit(arrow, (225, 350))
 
         lenP = len(p1.hand)
@@ -58,6 +59,7 @@ class Board:
         len3 = len(a3.hand)
         len4 = len(a4.hand)
 
+        # Show nicknames and card amount
         if len2 > 0:
             if turn == a2:
                 a2_name = p.font.SysFont("Comic Sans", 25).render(a2.nick + " [" + str(len2) + "]", True, "#FF7870")
@@ -84,6 +86,7 @@ class Board:
             a4_name_rect = a4_name.get_rect(center=(1060, 275))
             screen.blit(a4_name, a4_name_rect)
 
+        # Show piles
         card_height = 220
         card_width = 140
 
@@ -119,6 +122,7 @@ class Board:
 
         last_card.draw_card(screen, WIDTH // 2 + 120, HEIGHT // 2 - 50, cards)
 
+        # Show player's cards
         j = 0
         if lenP > 4:
             for card in p1.hand:
@@ -143,6 +147,7 @@ class Board:
                     card.draw_card(screen, (250 + ((WIDTH - 150) / lenP) * j), HEIGHT - 150, cards)
                 j += 1
 
+        # Show AI's cards
         if len2 > 20:
             for i in range(20):
                 screen.blit(back_card_l, (40, (150 - ((HEIGHT - 300) / 20) * i + 250)))

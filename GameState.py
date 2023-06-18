@@ -222,23 +222,28 @@ class GameState:
     # Function to run the game
     def play(self, clock, fps):
 
+        # Global variables
         global CARDS
         global SHOW_LOG
         CARDS = Cards.load_cards()
 
+        # Window size
         width = 1080
         height = 720
         log_space = 300
 
+        # Background
         bg = p.image.load('images/deck.png')
         bg = p.transform.scale(bg, (width, height))
 
         screen = p.display.set_mode((width, height))
 
+        # Board preparations
         board = Board.Board()
         board.prepare_piles()
         board.deal_the_cards(self.queue)
 
+        # If first card is a special card
         if isinstance(board.discard_pile[-1], Cards.SpecialCard):
             if board.discard_pile[-1].block:
                 self.log.append("You are blocked!")
@@ -254,12 +259,15 @@ class GameState:
                 self.player.hand.append(board.draw_pile.pop())
                 self.switch_turn(board)
 
+        SHOW_LOG = False
         running = True
         picked_card = None
         added_card = False
         say_uno = False
         help_window_displayed = False
         display_text_help = False
+        tick_counter = 0
+
         coords = self.player.gen_coords()
 
         draw_rect = p.Rect(width // 2 - 200, height // 2 - 120, 140, 220)
@@ -267,12 +275,10 @@ class GameState:
 
         self.update_screen(screen, bg, board, picked_card, display_text_help)
 
-        SHOW_LOG = False
-
-        tick_counter = 0
-
+        # The main game loop
         while running:
 
+            # Count the time player spends on thinking and display a tip
             if self.queue[0] == self.player and tick_counter < 420:
                 tick_counter += 1
             if tick_counter == 420:
@@ -282,12 +288,14 @@ class GameState:
 
             # Player actions
             for e in p.event.get():
+                # End the game
                 if e.type == p.QUIT:
                     running = False
                 elif e.type == p.KEYDOWN:
                     if e.key == p.K_ESCAPE:
                         running = False
                         self.print_end_screen()
+                    # Toggle log
                     if e.key == p.K_l:
                         SHOW_LOG = not SHOW_LOG
                         if SHOW_LOG:
@@ -297,12 +305,16 @@ class GameState:
                         else:
                             screen = p.display.set_mode((width, height))
                             self.update_screen(screen, bg, board, picked_card, display_text_help)
+
                 elif e.type == p.MOUSEBUTTONDOWN and e.button == 1 and not help_window_displayed:
                     if len(self.queue) > 0 and self.queue[0] == self.player:
                         if discard_rect.collidepoint(e.pos):
                             try:
                                 if self.player.check_card(picked_card, board):
+                                    # Making a move
                                     self.player.make_move(picked_card, board, self)
+                                    display_text_help = False
+                                    tick_counter = 0
                                     self.log.append("You put " + picked_card.translate_card() + " card!")
                                     if SHOW_LOG:
                                         screen = p.display.set_mode((width + log_space, height))
@@ -316,6 +328,7 @@ class GameState:
                                             break
                                     self.animate_card(start_coords, (660, 310), picked_card, board, screen)
 
+                                    # Uno popup
                                     if len(self.player.hand) == 1:
                                         say_uno = True
                                         if not self.player.display_uno_button(screen,
@@ -340,6 +353,7 @@ class GameState:
                                         self.print_end_screen()
 
                                 else:
+                                    # If you cannot place the picked card
                                     self.log.append("You cannot place this card!")
                                     self.update_screen(screen, bg, board, picked_card, display_text_help)
                                     if SHOW_LOG:
@@ -350,6 +364,7 @@ class GameState:
 
                         elif draw_rect.collidepoint(e.pos):
                             if not added_card:
+                                # Picking a card from a draw pile
                                 self.player.pick_card(board)
                                 self.log.append("You picked a card from a draw pile!")
                                 self.animate_card((440, 340), (540, 520), self.player.hand[-1], board, screen)
@@ -358,6 +373,7 @@ class GameState:
                                 screen.fill((0, 0, 0))
                                 screen.blit(bg, (0, 0))
 
+                                # Switch turn if player doesn't have any matching card
                                 if not self.player.has_placeable_card(board):
                                     self.switch_turn(board)
                                     added_card = False
@@ -374,6 +390,7 @@ class GameState:
                                 self.display_log(screen)
 
                         else:
+                            # Picking any card from Player's hand
                             for coord in coords:
                                 rect = p.Rect(coord[1] - 110, coord[2] - 70, 140, 220)
                                 if rect.collidepoint(e.pos):
@@ -383,6 +400,7 @@ class GameState:
                                     if SHOW_LOG:
                                         self.display_log(screen)
 
+                # Displaying help popup
                 elif e.type == p.MOUSEBUTTONDOWN and e.button == 3 and not say_uno and not help_window_displayed:
                     if len(self.queue) > 0 and self.queue[0] == self.player:
                         display_text_help = False

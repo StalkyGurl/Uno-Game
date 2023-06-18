@@ -178,7 +178,7 @@ class GameState:
             x += dx
             y += dy
 
-            self.update_screen(screen, bg, board, None)
+            self.update_screen(screen, bg, board, None, False)
             self.display_log(screen)
 
             if len(board.discard_pile) >= 2:
@@ -210,10 +210,14 @@ class GameState:
             screen.blit(text, text_rect)
 
     # Function to update the screen
-    def update_screen(self, screen, bg, board, picked_card):
+    def update_screen(self, screen, bg, board, picked_card, if_help):
         screen.fill((0, 0, 0))
         screen.blit(bg, (0, 0))
         board.display_cards(self.queue[0], self.player, self.ai1, self.ai2, self.ai3, screen, picked_card, CARDS)
+        if if_help:
+            help_text = p.font.SysFont("Comic Sans", 16, True).render("RIGHT-CLICK FOR HELP!", True, "#FFFFFF")
+            help_rect = help_text.get_rect(center=(540, 477))
+            screen.blit(help_text, help_rect)
 
     # Function to run the game
     def play(self, clock, fps):
@@ -253,15 +257,29 @@ class GameState:
         running = True
         picked_card = None
         added_card = False
+        say_uno = False
+        help_window_displayed = False
+        display_text_help = False
         coords = self.player.gen_coords()
 
         draw_rect = p.Rect(width // 2 - 200, height // 2 - 120, 140, 220)
         discard_rect = p.Rect(width // 2 + 10, height // 2 - 120, 140, 220)
 
-        self.update_screen(screen, bg, board, picked_card)
+        self.update_screen(screen, bg, board, picked_card, display_text_help)
 
         SHOW_LOG = False
+
+        tick_counter = 0
+
         while running:
+
+            if self.queue[0] == self.player and tick_counter < 420:
+                tick_counter += 1
+            if tick_counter == 420:
+                display_text_help = True
+                tick_counter += 1
+                self.update_screen(screen, bg, board, picked_card, display_text_help)
+
             # Player actions
             for e in p.event.get():
                 if e.type == p.QUIT:
@@ -274,12 +292,12 @@ class GameState:
                         SHOW_LOG = not SHOW_LOG
                         if SHOW_LOG:
                             screen = p.display.set_mode((width + log_space, height))
-                            self.update_screen(screen, bg, board, picked_card)
+                            self.update_screen(screen, bg, board, picked_card, display_text_help)
                             self.display_log(screen)
                         else:
                             screen = p.display.set_mode((width, height))
-                            self.update_screen(screen, bg, board, picked_card)
-                elif e.type == p.MOUSEBUTTONDOWN and e.button == 1:
+                            self.update_screen(screen, bg, board, picked_card, display_text_help)
+                elif e.type == p.MOUSEBUTTONDOWN and e.button == 1 and not help_window_displayed:
                     if len(self.queue) > 0 and self.queue[0] == self.player:
                         if discard_rect.collidepoint(e.pos):
                             try:
@@ -289,7 +307,8 @@ class GameState:
                                     if SHOW_LOG:
                                         screen = p.display.set_mode((width + log_space, height))
                                     self.switch_turn(board)
-                                    self.update_screen(screen, bg, board, picked_card)
+                                    tick_counter = 0
+                                    self.update_screen(screen, bg, board, picked_card, display_text_help)
                                     self.display_log(screen)
                                     for coord in coords:
                                         if coord[0] == picked_card:
@@ -298,14 +317,15 @@ class GameState:
                                     self.animate_card(start_coords, (660, 310), picked_card, board, screen)
 
                                     if len(self.player.hand) == 1:
+                                        say_uno = True
                                         if not self.player.display_uno_button(screen,
                                                                               clock, [self.ai1.nick,
                                                                                       self.ai2.nick,
                                                                                       self.ai3.nick], self):
                                             self.player.hand.append(board.draw_pile.pop())
                                             self.player.hand.append(board.draw_pile.pop())
-                                        self.update_screen(screen, bg, board, picked_card)
-
+                                        self.update_screen(screen, bg, board, picked_card, display_text_help)
+                                        say_uno = False
                                         if SHOW_LOG:
                                             self.display_log(screen)
                                     picked_card = None
@@ -321,7 +341,7 @@ class GameState:
 
                                 else:
                                     self.log.append("You cannot place this card!")
-                                    self.update_screen(screen, bg, board, picked_card)
+                                    self.update_screen(screen, bg, board, picked_card, display_text_help)
                                     if SHOW_LOG:
                                         self.display_log(screen)
 
@@ -349,7 +369,7 @@ class GameState:
                                 added_card = False
                                 picked_card = None
 
-                            self.update_screen(screen, bg, board, picked_card)
+                            self.update_screen(screen, bg, board, picked_card, display_text_help)
                             if SHOW_LOG:
                                 self.display_log(screen)
 
@@ -358,16 +378,26 @@ class GameState:
                                 rect = p.Rect(coord[1] - 110, coord[2] - 70, 140, 220)
                                 if rect.collidepoint(e.pos):
                                     picked_card = coord[0]
-                                    self.update_screen(screen, bg, board, picked_card)
+                                    self.update_screen(screen, bg, board, picked_card, display_text_help)
                                     self.log.append("You picked " + picked_card.translate_card() + " card!")
                                     if SHOW_LOG:
                                         self.display_log(screen)
+
+                elif e.type == p.MOUSEBUTTONDOWN and e.button == 3 and not say_uno and not help_window_displayed:
+                    if len(self.queue) > 0 and self.queue[0] == self.player:
+                        display_text_help = False
+                        help_window_displayed = True
+                        help_bg = p.image.load('images/help.png')
+                        screen.blit(help_bg, (150, 100))
+                elif e.type == p.MOUSEBUTTONDOWN and e.button == 3 and help_window_displayed:
+                    self.update_screen(screen, bg, board, picked_card, display_text_help)
+                    help_window_displayed = False
 
             # AI actions:
             if len(self.queue) > 0 and self.queue[0] != self.player:
                 self.ai_turn(board, screen)
                 coords = self.player.gen_coords()
-                self.update_screen(screen, bg, board, picked_card)
+                self.update_screen(screen, bg, board, picked_card, display_text_help)
                 if SHOW_LOG:
                     self.display_log(screen)
 

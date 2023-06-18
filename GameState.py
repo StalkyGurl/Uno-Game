@@ -131,7 +131,12 @@ class GameState:
     def ai_turn(self, board, screen):
         coord_dict = {self.ai1: (220, 275), self.ai2: (540, 220), self.ai3: (860, 275)}
         activeAI = self.queue[0]
-        p.time.wait(1000)
+
+        if self.player in self.queue:
+            p.time.wait(1000)
+        else:
+            p.time.wait(500)
+
         activeAI.make_ai_move(board, self)
         self.switch_turn(board)
         self.animate_card(coord_dict[activeAI], (660, 310), board.discard_pile[-1], board, screen)
@@ -148,7 +153,11 @@ class GameState:
         x, y = start_pos
         end_x, end_y = end_pos
 
-        total_frames = 20
+        if self.player in self.queue:
+            total_frames = 20
+        else:
+            total_frames = 10
+
         dx = (end_x - x) / total_frames
         dy = (end_y - y) / total_frames
 

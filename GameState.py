@@ -3,12 +3,12 @@ This file contains Game State Class that runs the game
 """
 
 import pygame as p
-
 import Cards
 import Player
 import AI
 import Board
 import sys
+from random import choice
 
 CARDS = dict()
 SHOW_LOG = False

@@ -97,7 +97,8 @@ class Player:
 
             for e in p.event.get():
                 if e.type == p.QUIT:
-                    return 'B'
+                    return max(colors.items(), key=lambda x: x[1])[0]
+
                 elif e.type == p.MOUSEBUTTONDOWN:
                     if blue_button.check_for_input(p.mouse.get_pos()):
                         return 'B'
@@ -107,7 +108,7 @@ class Player:
                         return 'Y'
                     elif red_button.check_for_input(p.mouse.get_pos()):
                         return 'R'
-                    running = False
+
             p.display.update()
 
     # Function to display the uno button

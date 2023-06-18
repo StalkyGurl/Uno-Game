@@ -145,9 +145,6 @@ class Player:
 
     # Function to make a move
     def make_move(self, picked_card, board, gamestate):
-        if isinstance(board.discard_pile[-1], Cards.SpecialCard) and board.discard_pile[-1].wild:
-            board.discard_pile[-1].wild_color_choice = None
-
         board.discard_pile.append(picked_card)
         self.hand.remove(picked_card)
 

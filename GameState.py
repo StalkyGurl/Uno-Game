@@ -131,20 +131,25 @@ class GameState:
     def ai_turn(self, board, screen):
         coord_dict = {self.ai1: (220, 275), self.ai2: (540, 220), self.ai3: (860, 275)}
         activeAI = self.queue[0]
+        hand_len = len(activeAI.hand)
 
+        # AI plays faster if Player already won
         if self.player in self.queue:
             p.time.wait(1000)
         else:
             p.time.wait(500)
 
         activeAI.make_ai_move(board, self)
+        new_hand_len = len(activeAI.hand)
         self.switch_turn(board)
-        self.animate_card(coord_dict[activeAI], (660, 310), board.discard_pile[-1], board, screen)
+        # Play animation if any card was placed
+        if new_hand_len <= hand_len:
+            self.animate_card(coord_dict[activeAI], (660, 310), board.discard_pile[-1], board, screen, True)
         winner = self.check_win()
         self.podium.append(winner)
 
     # Function to animate card
-    def animate_card(self, start_pos, end_pos, card, board, screen):
+    def animate_card(self, start_pos, end_pos, card, board, screen, override):
         global SHOW_LOG
 
         bg = p.image.load('images/deck.png')
@@ -181,7 +186,7 @@ class GameState:
             self.update_screen(screen, bg, board, None, False)
             self.display_log(screen)
 
-            if len(board.discard_pile) >= 2:
+            if len(board.discard_pile) >= 2 and override:
                 last_card = board.discard_pile[-2]
                 last_card.draw_card(screen, 660, 310, CARDS)
 
@@ -326,7 +331,7 @@ class GameState:
                                         if coord[0] == picked_card:
                                             start_coords = (coord[1], coord[2])
                                             break
-                                    self.animate_card(start_coords, (660, 310), picked_card, board, screen)
+                                    self.animate_card(start_coords, (660, 310), picked_card, board, screen, True)
 
                                     # Uno popup
                                     if len(self.player.hand) == 1:
@@ -367,7 +372,7 @@ class GameState:
                                 # Picking a card from a draw pile
                                 self.player.pick_card(board)
                                 self.log.append("You picked a card from a draw pile!")
-                                self.animate_card((440, 340), (540, 520), self.player.hand[-1], board, screen)
+                                self.animate_card((440, 340), (540, 520), self.player.hand[-1], board, screen, False)
                                 added_card = True
                                 coords = self.player.gen_coords()
                                 screen.fill((0, 0, 0))

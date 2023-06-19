@@ -158,7 +158,7 @@ class Player:
                 for card in self.hand:
                     colors[card.color] += 1
 
-                max_color = max(colors.items(), key=lambda x: x[1])[0]
+                max_color = max(colors.items(), key=lambda x: x[1] if x[0] != 'N' else float('-inf'))[0]
 
                 picked_card.wild_color_choice = max_color
 

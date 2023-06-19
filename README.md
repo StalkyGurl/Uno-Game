@@ -1,7 +1,19 @@
 # Uno Game
- Uno Card Game in Python
+Uno Card Game in Python.
+Project created for PO class at University of Wroclaw.
+ 
+# Requirements:
+- Python 3.10 and an interpreter of choice 
+- Pygame library
 
-# Official "basic" Uno Rules
+# How to run:
+ Clone the repository to your computer, open the folder containing the repository.
+ 
+ ```pip install -r requirements.txt```
+ 
+ ```python3 main.py```
+
+# Uno Rules
 - everyone starts with 7 cards
 - if no cards to put, you have to pick a card from a Draw pile
 - if you can play the picked card, play it (or skip your turn)
@@ -16,8 +28,8 @@ A standard deck of Uno cards consists of 108 cards:
   - 2 Draw Two cards
   - 2 Reverse cards
   - 2 Skip cards
-4 Wild cards
-4 Wild Draw 4 cards
+- 4 Wild cards
+- 4 Wild Draw 4 cards
 
 Reverse – If going clockwise, switch to counterclockwise or vice versa. 
         It can only be played on a card that matches by color, or on another Reverse card. 
@@ -44,3 +56,5 @@ Wild – This card represents all four colors,
 Wild Draw Four – This acts just like the wild card except that 
         the next player also has to draw four cards as well as forfeit 
         his/her turn.
+		
+# Author: Aleksandra Sęk

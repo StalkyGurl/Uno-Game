@@ -1,5 +1,6 @@
 """
-This file contains Board class
+This file contains Board class. This class is responsible for shuffling the cards, dealing the cards,
+replenishing the piles, and displaying the cards and other information on the screen.
 """
 
 from Player import *

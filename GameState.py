@@ -8,7 +8,6 @@ import Player
 import AI
 import Board
 import sys
-from random import choice
 
 CARDS = dict()
 SHOW_LOG = False
